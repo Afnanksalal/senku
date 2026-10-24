@@ -1,6 +1,6 @@
 # Integration contracts
 
-Source: masterplan sections 9-13, 22-27. Status: conceptual requirements; no executable schema, migration, or OpenAPI specification exists yet.
+Source: masterplan sections 9-13, 22-27. The requirements below preserve the source interpretation. Canonical executable contracts now live in packages/experiment-schema, apps/api/src/database/migrations and generated /openapi.json. See backend.md for implemented route differences, authentication, cancellation, replay and limits.
 
 ## Experiment identity
 

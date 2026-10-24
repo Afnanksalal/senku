@@ -1,5 +1,26 @@
 name: senku
 services:
+  gateway:
+    image: nginx:stable-alpine@sha256:47928bf67eb62a1863cb08d9ecb52d3e704304ba614eaee17884204677702951
+    entrypoint: [nginx]
+    command: [-g, "daemon off;"]
+    user: "101:101"
+    ports: ["127.0.0.1:3000:8080"]
+    volumes:
+      - ./infra/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks: [app]
+    depends_on:
+      web: {condition: service_healthy}
+      api: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    healthcheck:
+      test: [CMD, wget, -q, -O, /dev/null, http://127.0.0.1:8080/api/health]
+      interval: 15s
+      timeout: 5s
+      retries: 5
   tooling:
     profiles: [tools]
     build:
@@ -13,7 +34,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: web
-    ports: ["127.0.0.1:3000:3000"]
+    expose: ["3000"]
     networks: [app]
     init: true
     read_only: true
@@ -31,8 +52,18 @@ services:
       dockerfile: Dockerfile
       target: api
     ports: ["127.0.0.1:3001:3001"]
-    environment:
+    environment: &backend-environment
+      NODE_ENV: ${NODE_ENV:-development}
+      AUTO_MIGRATE: ${AUTO_MIGRATE:-true}
       PORT: 3001
+      SCIENCE_TOKEN: ${SCIENCE_TOKEN:?Run scripts/setup.ps1}
+      OFFLINE_SIGNING_KEY: ${OFFLINE_SIGNING_KEY:?Run scripts/setup.ps1}
+      AUTH_MODE: ${AUTH_MODE:-local}
+      ALLOW_LOCAL_REGISTRATION: ${ALLOW_LOCAL_REGISTRATION:-true}
+      RATE_LIMIT_PER_MINUTE: ${RATE_LIMIT_PER_MINUTE:-120}
+      S3_CREATE_BUCKET: ${S3_CREATE_BUCKET:-false}
+      ENABLE_GEMINI: ${ENABLE_GEMINI:-false}
+      GEMINI_MODEL: ${GEMINI_MODEL:-}
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       REDIS_URL: redis://redis:6379
       S3_ENDPOINT: http://minio:9000
@@ -56,6 +87,22 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
+  jobs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: api
+    command: [node, apps/api/dist/worker-main.js]
+    environment: *backend-environment
+    depends_on:
+      api: {condition: service_healthy}
+    networks: [app, data, compute]
+    init: true
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    restart: unless-stopped
   postgres:
     image: postgres:17-bookworm@sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27
     environment:
@@ -100,6 +147,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/numerics/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -120,6 +168,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/rdkit/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -140,6 +189,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/cobrapy/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -160,6 +210,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/roadrunner/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -180,6 +231,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/tellurium/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -200,6 +252,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/biosimulators/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -220,6 +273,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/copasi/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -240,6 +294,7 @@ services:
     build:
       context: .
       dockerfile: services/workers/physicell/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true
     read_only: true
@@ -260,6 +315,7 @@ services:
     build:
       context: .
       dockerfile: services/molecule-editor/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     read_only: true
     tmpfs: [/tmp]

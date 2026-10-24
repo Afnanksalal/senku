@@ -32,6 +32,7 @@ node_modules
 **/*.tsbuildinfo
 coverage
 playwright-report
+.playwright-cli
 test-results
 
 # Local-only data and tooling

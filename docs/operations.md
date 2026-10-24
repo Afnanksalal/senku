@@ -11,3 +11,7 @@ Scientific images use pinned digests and tested native dependency combinations. 
 Operational observability should connect request, investigation, task, batch and run IDs to status, duration, warnings and artifacts without exposing secrets or unnecessary learner data. Metrics retention, logging provider and incident process remain undecided.
 
 Before deployment verify image/decoder paths, artifact access controls and hashes, cache behavior, service health, timeout/retry/cancellation behavior, permissions, actual egress/isolation, backup restore and bounded concurrency. A generated Compose file alone is not this evidence.
+
+## Implemented backend operations
+
+The backend implementation, production configuration gates, actual lifecycle, migration/admin/cleanup CLI, recovery scripts, test isolation and provider limitations are maintained in [backend.md](backend.md). Earlier paragraphs describe the target infrastructure, not evidence of a public deployment.

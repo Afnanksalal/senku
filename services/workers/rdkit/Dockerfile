@@ -5,7 +5,7 @@ WORKDIR /worker
 COPY services/workers/rdkit/requirements.lock /worker/requirements.lock
 RUN pip install --no-cache-dir --require-hashes -r requirements.lock
 RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 libgomp1 && rm -rf /var/lib/apt/lists/*
-COPY services/workers/health.py /worker/health.py
+COPY services/workers/health.py services/workers/execute.py /worker/
 ENV ENGINE=rdkit
 USER 10001:10001
 EXPOSE 8080

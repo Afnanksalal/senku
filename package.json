@@ -11,7 +11,7 @@
   },
   "scripts": {
     "dev": "concurrently -k \"npm run dev -w @senku/web\" \"npm run dev -w @senku/api\"",
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build -w @senku/experiment-schema && npm run build -w @senku/api && npm run build -w @senku/web",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "format:check": "git diff --check",
     "verify:infra": "node scripts/check-infra.cjs"

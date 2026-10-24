@@ -21,6 +21,9 @@ Current explicit user requirements take precedence over conflicting source sugge
 
 ## Topics
 
+- [Implemented backend and operating guide](backend.md)
+- [Backend coverage and verification limits](backend-coverage.md)
+
 - [Docker setup](setup.md)
 - [Dependency selections](dependency-selection.md)
 

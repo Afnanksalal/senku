@@ -10,6 +10,7 @@
 *.mjs text eol=lf
 *.py text eol=lf
 *.ps1 text eol=lf
+*.sql text eol=lf
 *.lock text eol=lf
 Dockerfile text eol=lf
 *.Dockerfile text eol=lf

@@ -1,0 +1,23 @@
+# Optional local Google ADC mount. Authenticate with scripts/gemini-login.ps1 first.
+# docker compose -f compose.yaml -f compose.gemini.yaml up -d api jobs
+services:
+  api:
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /var/run/secrets/google/adc.json
+    volumes:
+      - type: bind
+        source: ./.secrets/gcloud/application_default_credentials.json
+        target: /var/run/secrets/google/adc.json
+        read_only: true
+        bind:
+          create_host_path: false
+  jobs:
+    environment:
+      GOOGLE_APPLICATION_CREDENTIALS: /var/run/secrets/google/adc.json
+    volumes:
+      - type: bind
+        source: ./.secrets/gcloud/application_default_credentials.json
+        target: /var/run/secrets/google/adc.json
+        read_only: true
+        bind:
+          create_host_path: false

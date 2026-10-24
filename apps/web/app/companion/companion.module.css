@@ -1,0 +1,30 @@
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 1.5rem; align-items: center; }
+.intro h1 { font-size: clamp(2rem, 4vw, 3rem); }
+.intro p { max-width: 54ch; margin-top: .75rem; }
+.workspace { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(0, 1.7fr); gap: 1.25rem; align-items: start; }
+.context { display: grid; gap: 1rem; }
+.context p { overflow-wrap: anywhere; }
+.context select { min-width: 0; }
+.shell { min-width: 0; }
+.heading { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+.heading h2 { font-size: 1.25rem; }
+.introArt { width: 120px; }
+.empty { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1rem; align-items: center; padding: 1.25rem 0; }
+.empty img { width: 88px; }
+.starters { display: flex; gap: .5rem; flex-wrap: wrap; }
+.starters button { font-weight: 650; text-align: left; justify-content: flex-start; }
+.transcript { display: grid; gap: 1rem; margin: 0; padding: 1rem 0; list-style: none; }
+.message { min-width: 0; display: grid; gap: .65rem; padding: 1rem 1.15rem; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); }
+.message[data-role='user'] { margin-left: clamp(0rem, 3vw, 2rem); background: color-mix(in srgb, var(--hema) 8%, white); }
+.message p { white-space: pre-wrap; overflow-wrap: anywhere; }
+.message > header { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; font-weight: 800; font-size: .85rem; }
+.message footer { font-size: .8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.reflection { padding: .75rem; border-left: 3px solid var(--chlorophyll); background: color-mix(in srgb, var(--chlorophyll) 5%, white); border-radius: 0 10px 10px 0; }
+.composer { display: grid; gap: .65rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.composer textarea { min-height: 6rem; }
+.composerFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
+.status { display: flex; gap: .5rem; align-items: center; color: var(--ink-soft); padding-block: .5rem; }
+.summon { display: flex; align-items: center; gap: 1rem; justify-content: space-between; flex-wrap: wrap; }
+.summon p { max-width: 48ch; }
+@media(max-width: 800px) { .workspace { grid-template-columns: minmax(0, 1fr); } }
+@media(max-width: 480px) { .intro { grid-template-columns: minmax(0, 1fr); } .introArt { display: none; } .empty { grid-template-columns: minmax(0, 1fr); } .empty img { width: 64px; } .message { padding: .85rem; } }

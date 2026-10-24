@@ -1,0 +1,227 @@
+import { Experiment, experimentSchema } from '@senku/experiment-schema';
+
+const number = (unit: string, min: number, max: number, value: number, integer = false) => ({
+  type: 'number' as const,
+  unit,
+  min,
+  max,
+  default: value,
+  integer,
+});
+const educational = (
+  id: string,
+  name: string,
+  description: string,
+  parameters: Experiment['parameters'],
+  equations: string[],
+  concept: string,
+  engine: Experiment['engine']['id'] = 'numerics',
+  local = false,
+): Experiment =>
+  experimentSchema.parse({
+    schema_version: '1.0.0',
+    id,
+    version: '1.0.0',
+    subject: 'biology',
+    name,
+    description,
+    model: {
+      id: `${id}-model`,
+      version: '1.0.0',
+      scientific_status: 'illustrative_educational',
+      equations,
+      assumptions: [
+        'Bounded educational model; not an experimentally calibrated biological prediction.',
+      ],
+      limitations: [
+        'Do not infer clinical, organism-specific or real-world experimental outcomes.',
+      ],
+      references: [],
+    },
+    engine: { id: engine, adapter_version: '1.0.0', timeout_seconds: 30 },
+    parameters,
+    outputs: [
+      { id: 'scalars', type: 'table', unit: 'declared_per_quantity' },
+      { id: 'trajectory', type: 'time_series', unit: 'declared_per_column' },
+    ],
+    learning: { objective: description, concept },
+    modes: ['learn', 'lab', 'challenge', 'discover'],
+    local_capable: local,
+    safety: { class: 'approved_educational', user_code: false },
+  });
+export const experiments: Experiment[] = [
+  educational(
+    'molecule-sketchbook',
+    'Molecule Sketchbook',
+    'Inspect a bounded small molecule and generate a seeded illustrative conformer.',
+    {
+      smiles: { type: 'text', unit: 'SMILES', max_length: 256, default: 'CCO' },
+      generate_3d: { type: 'enum', unit: 'dimensionless', values: ['yes', 'no'], default: 'yes' },
+    },
+    [
+      'Descriptors are calculated from molecular connectivity. ETKDG conformers are geometric hypotheses.',
+    ],
+    'molecular-structure',
+    'rdkit',
+  ),
+  educational(
+    'cell-energy',
+    'Save the Cell',
+    'Explore how the limiting resource constrains an illustrative energy index.',
+    {
+      oxygen: number('normalized_resource_percent', 0, 100, 45),
+      glucose: number('normalized_resource_percent', 0, 100, 35),
+      demand: number('normalized_demand_percent', 1, 100, 50),
+    },
+    ['energy_index = min(100, 100 * min(oxygen, glucose) / demand)'],
+    'limiting-resources',
+    'numerics',
+    true,
+  ),
+  educational(
+    'enzyme-explorer',
+    'Enzyme Explorer',
+    'Predict substrate saturation and compare reaction rates.',
+    {
+      substrate_mM: number('mM', 0, 20, 2),
+      vmax: number('mM/min', 0.01, 10, 1),
+      km_mM: number('mM', 0.01, 20, 2),
+      duration: number('min', 0.1, 60, 10),
+    },
+    ['v = vmax * S / (km + S)', 'dS/dt = -v; dP/dt = v'],
+    'enzyme-saturation',
+    'numerics',
+    true,
+  ),
+  educational(
+    'population-dynamics',
+    'Population Dynamics',
+    'Explore logistic growth and carrying capacity.',
+    {
+      initial_population: number('individuals', 0, 1000, 50),
+      capacity: number('individuals', 1, 10000, 1000),
+      growth_rate: number('1/min', 0, 2, 0.2),
+      duration: number('min', 0.1, 100, 20),
+    },
+    ['dN/dt = growth_rate * N * (1 - N/capacity)'],
+    'carrying-capacity',
+    'numerics',
+    true,
+  ),
+  educational(
+    'genetics-lab',
+    'Genetics Lab',
+    'Compare Mendelian expectations with seeded sampling.',
+    {
+      parent1: { type: 'enum', unit: 'dimensionless', values: ['AA', 'Aa', 'aa'], default: 'Aa' },
+      parent2: { type: 'enum', unit: 'dimensionless', values: ['AA', 'Aa', 'aa'], default: 'Aa' },
+      sample_size: number('offspring', 1, 10000, 100, true),
+    },
+    ['Each parent contributes one uniformly sampled allele.'],
+    'inheritance',
+    'numerics',
+    true,
+  ),
+  educational(
+    'diffusion-playground',
+    'Diffusion Playground',
+    'Observe diffusion in a closed two-dimensional grid.',
+    {
+      diffusivity: number('cm2/min', 0.0001, 0.1, 0.01),
+      grid_size: number('cells', 8, 48, 24, true),
+      steps: number('steps', 1, 200, 50, true),
+    },
+    ['dC/dt = D * Laplacian(C)', 'No-flux boundaries; explicit step obeys the stability limit.'],
+    'diffusion',
+  ),
+  educational(
+    'ecosystem-rescue',
+    'Ecosystem Rescue',
+    'Explore a simplified nutrient, algae and oxygen system.',
+    {
+      nutrients: number('normalized_input/min', 0, 2, 0.2),
+      light: number('normalized_fraction', 0, 1, 0.5),
+      temperature: number('degC', 5, 40, 20),
+      duration: number('min', 1, 120, 60),
+    },
+    [
+      'growth = 0.1 * light * N/(1+N) * A',
+      'dN/dt = input - growth - 0.02*N',
+      'dA/dt = growth - 0.05*A',
+      'dO/dt = 0.1*(8-O) + 0.5*growth - 0.1*A - 0.01*abs(T-20)',
+    ],
+    'ecosystem-feedback',
+  ),
+  educational(
+    'pathway-playground',
+    'Pathway Playground',
+    'Compose approved mass-action components and compare trajectories.',
+    {
+      duration: number('min', 0.1, 60, 10),
+    },
+    [
+      'dS/dt = stoichiometry * mass_action_rates',
+      'Concentrations use mM; each rate constant has the order-dependent units documented in the compiled model.',
+    ],
+    'reaction-networks',
+    'roadrunner',
+  ),
+  educational(
+    'metabolism-explorer',
+    'Metabolism Explorer',
+    'Explore feasible flux in a curated toy resource network.',
+    {
+      uptake: number('normalized_flux_units', 0, 20, 10),
+      maintenance: number('normalized_flux_units', 0, 10, 1),
+    },
+    ['maximize product subject to uptake <= bound, maintenance >= demand and steady-state balance'],
+    'flux-balance',
+    'cobrapy',
+  ),
+  educational(
+    'cell-colony',
+    'Cell Colony',
+    'Observe an approved generic multicellular template.',
+    {
+      duration: number('min', 0.1, 30, 1),
+      initial_cells: number('cells', 1, 20, 5, true),
+    },
+    [
+      'PhysiCell upstream generic template; model-specific rules and provenance accompany each run.',
+    ],
+    'cell-populations',
+    'physicell',
+  ),
+];
+export const engineCapabilities = [
+  {
+    id: 'numerics',
+    models: [
+      'cell-energy',
+      'enzyme-explorer',
+      'population-dynamics',
+      'genetics-lab',
+      'diffusion-playground',
+      'ecosystem-rescue',
+    ],
+    execution: true,
+  },
+  { id: 'roadrunner', models: ['pathway-playground'], execution: true },
+  { id: 'tellurium', models: ['pathway-playground'], execution: true },
+  { id: 'copasi', models: ['pathway-playground'], execution: true },
+  { id: 'cobrapy', models: ['metabolism-explorer'], execution: true },
+  { id: 'physicell', models: ['cell-colony'], execution: true },
+  {
+    id: 'rdkit',
+    models: ['molecule-sketchbook'],
+    execution: true,
+    operations: ['molecules.validate', 'molecules.describe'],
+  },
+  {
+    id: 'biosimulators',
+    models: [],
+    execution: false,
+    operations: ['standards.validation'],
+    reason: 'Standards utilities are not themselves a simulation engine.',
+  },
+];

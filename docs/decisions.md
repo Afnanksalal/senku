@@ -41,3 +41,30 @@ Resolve routine implementation details with evidence within authorized scope. As
 ## Dependency bootstrap selections (2026-10-24)
 
 Authorized Docker-first setup selects npm workspaces, Node 24, TypeScript 5.9, Next/React, NestJS, Radix/custom UI, ECharts, Mol*, Drizzle/PostgreSQL, and Yjs/Socket.IO. These settle bootstrap tooling choices within D10-D12; auth policies, collaborative protocol, model schema and full scientific adapters remain open. See dependency-selection.md and setup.md. Docker Desktop is installed per-user using WSL2. No GCP project or credentials have been configured.
+
+## Backend implementation decisions (2026-10-24)
+
+- PostgreSQL is the source of truth. BullMQ transports work through a transactional outbox, stable job IDs and database-driven recovery. API and jobs run separately.
+- One canonical executable experiment schema binds immutable model/experiment versions, bounded parameters, units and educational status. Catalogs/lessons are code-owned; arbitrary uploaded model/code/image execution is excluded.
+- Guests explore catalogs and obtain offline packs. Durable cloud progress, collaboration and expensive work require an account; remote computation also requires a redeemed invitation.
+- Development uses scrypt/opaque rotating sessions. Production uses Firebase verified-email identities with revocation checks; email alone cannot link accounts. Production startup forbids local registration and automatic migrations/bucket creation.
+- Daily compute units are bounded operations, not a currency balance. Started attempts consume their unit. UTC server-day accounting and transactional global/group/member checks serialize admission correctly.
+- Offline rewards are server-scored and exactly-once per lesson/version; event IDs reject conflicting retries. Streaks use server acceptance dates. The client cannot award XP or claim a server result.
+- Rooms use owner/editor/viewer roles, expected-version edits and exact shared-run snapshots. Multi-instance updates read a shared durable PostgreSQL event log. Revoked links stop future link use; removing an existing participant is a separate owner action.
+- Investigations use an actual persisted task DAG with deterministic reports by default. Optional Gemini prose never replaces authoritative solver facts, and citation IDs must match retrieved records. The companion stays quiet until explicitly invoked.
+- Classroom API foundations are included in the backend pass; teacher UI and public community remain deferred as confirmed by the user.
+- Worker outputs are bounded, hashed and retained privately. Cleanup defaults to 90 days; account deletion revokes access immediately and erases personal work after active computations stop. Operator backup expiry governs existing archives.
+- Local engine versions and adapter source hashes are recorded. Image digests remain null unless actual deployment identity is supplied. Initial science fixtures are educational, without empirical validation claims.
+
+See [backend.md](backend.md) for the operative API/protocol, deployment gates and verification commands. These choices settle the corresponding open implementation details in the earlier bootstrap notes; age/consent obligations and actual deployment capacity still require operator context.
+
+## Latest user override: local auth and functional delivery
+
+The user explicitly rejected Firebase and requested local/simple authentication, faster backend delivery and full coordination with Cursor's parallel frontend. This supersedes the earlier engineering selection of Firebase production identity. Firebase code/dependencies and the exchange route are removed; a new migration drops the unused binding. Local guest/email/password/session contracts stay unchanged. Further deployment hardening is not a completion gate for this pass. The live shared client contract and coordination log are docs/INTEGRATION.md.
+
+## Local Gemini authentication
+Use Google ADC for the selected project because its organization disallows API keys. Keep Senku account authentication local. No organization policy change or service-account key is needed. The pinned Docker CLI handles user consent; only the ADC JSON is mounted into API/jobs via the optional Compose file.
+
+
+## Expanded learner platform decisions
+The user superseded Cursor ownership and authorized parallel implementation of the remaining platform. Deliver current backend-backed learner/research/collaboration/classroom surfaces before further production hardening. Device challenge rewards are recomputed server-side from approved kernels. AI planning is scoped to an explicitly selected approved experiment to keep constrained generation bounded. Optional narrative failures must not discard completed solver evidence and must be labeled as AI unavailable. A dedicated nginx gateway handles same-origin HTTP and websocket traffic; credentials remain read-only ADC mounts for API/jobs only.

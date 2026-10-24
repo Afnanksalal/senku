@@ -1,0 +1,21 @@
+.intro { display: grid; gap: .65rem; max-width: 60rem; }
+.intro h1 { font-size: clamp(2rem, 4vw, 3rem); }
+.columns { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+.form { display: grid; gap: 1rem; }
+.roomList { margin: 0; padding: 0; list-style: none; display: grid; gap: .75rem; }
+.roomList li { min-width: 0; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; justify-content: space-between; padding: 1rem; }
+.roomList li > div { min-width: 0; }
+.roomList p { overflow-wrap: anywhere; }
+.workspace { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 320px); gap: 1.25rem; align-items: start; }
+.main, .side { display: grid; gap: 1.25rem; min-width: 0; }
+.bar { display: flex; gap: .75rem 1.25rem; align-items: center; flex-wrap: wrap; justify-content: space-between; }
+.bar h1 { font-size: clamp(1.6rem, 3vw, 2.4rem); }
+.members { display: grid; gap: .65rem; margin: 0; padding: 0; list-style: none; }
+.members li { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding-block: .5rem; border-bottom: 1px solid var(--line); }
+.members li > span { min-width: 0; overflow-wrap: anywhere; }
+.shareItem { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; padding-block: .65rem; border-bottom: 1px solid var(--line); }
+.shareItem p { overflow-wrap: anywhere; }
+.projection { padding: 1.25rem; border: 1px solid var(--line); border-radius: 16px; background: var(--paper); }
+.evidence { display: grid; gap: .65rem; }
+.evidence h2 { font-size: 1.2rem; }
+@media(max-width: 860px) { .columns,.workspace { grid-template-columns: minmax(0, 1fr); } }

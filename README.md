@@ -2,13 +2,26 @@
 
 **Don't just learn science. Do science.**
 
-Senku is a biology-first learning platform built around reproducible experiments. Learners predict, manipulate, observe and explain, then open the same experiment in an advanced laboratory. The planned platform includes guided learning, free exploration, collaborative labs and evidence-grounded AI investigations.
+Senku is a biology-first learning platform built around reproducible experiments. Learners predict, manipulate, observe and explain, then open the same experiment in a laboratory with scientific results, visualizations and provenance.
 
 ## Status
 
-The Docker dependency environment is installed and locally verified. Fourteen services passed health checks, alongside workspace type checks, dependency audits, scientific dependency smoke checks and database/queue/storage round-trips. The web and API are bootstrap scaffolds. Lessons, scientific adapters, authentication, collaboration, offline sync and AI workflows are not implemented yet.
+The local application connects learner missions, four interactive science games, learning progress, scientific labs, real 3D result views, reaction-network composition, Gemini chat, source search, AI investigations, shared labs, private sharing, offline lesson synchronization and role-based classroom tools. Seven isolated scientific adapters execute approved educational models. See the [backend operating guide](docs/backend.md), [coverage](docs/backend-coverage.md) and [implementation status](docs/status.md) for evidence and limits.
 
-See [implementation status](docs/status.md) and the [confirmed launch brief](docs/launch-brief.md). No GCP credentials are configured and no cloud resources are provisioned automatically.
+Gemini is optional and uses local Google ADC, never committed credentials. Setup does not automatically provision Google Cloud resources. This is a functional local platform, not a claim of production deployment or empirical model validation.
+
+| Surface | Route | Available behavior |
+|---|---|---|
+| Explore | `/` | Ten approved experiments and recent work |
+| Learn | `/learn` | Missions, authoritative XP, mastery and achievements |
+| Play | `/challenges` | Four live model games with server-verified device/server evidence |
+| Lab | `/lab` | Runs, scientific scenes, comparisons, CSV/JSON/SBML and reproducibility exports |
+| Research | `/discover` | Europe PMC papers, RCSB structures and cited investigations |
+| Ask Senku | `/companion` | Explicitly summoned Gemini explanations with model/run context |
+| Pathways | `/pathways` | Approved mass-action graph composition, compilation and real solver runs |
+| Shared labs | `/rooms` | Authenticated live settings, roles, revision conflicts, shared runs and private invitations |
+| Classroom | `/classroom` | Learner assignments; teacher/admin class creation, progress and exports |
+| Offline | `/offline` | Prepared lesson reload, local evidence queue and server reconciliation |
 
 ## Requirements
 
@@ -23,30 +36,32 @@ From the repository root:
 .\scripts\science.ps1
 ```
 
-Setup generates unique local secrets if needed, builds the web/API and starts PostgreSQL, Redis and MinIO. The science script builds isolated environments and molecular-editor dependencies using committed locks. Use -RefreshLocks only when intentionally updating Python resolution.
+Setup generates unique local secrets if needed, builds the web/API and starts the nginx gateway, PostgreSQL, Redis and MinIO. The gateway serves the app, API proxy and websocket upgrades on port 3000. Setup includes the optional read-only ADC mount when Gemini is enabled and its ignored credential file exists. The science script builds isolated environments and molecular-editor dependencies using committed locks. Use -RefreshLocks only when intentionally updating Python resolution.
 
 | Local interface | Address |
 |---|---|
-| Web bootstrap | http://localhost:3000 |
+| Web | http://localhost:3000 |
 | API health | http://localhost:3001/health |
+| API documentation | http://localhost:3001/docs |
 | MinIO console | http://localhost:9001 |
 
-Local storage credentials are in ignored .env. Database, queue and science ports are not published to the host. Scientific health services report execution_available=false until adapters exist; the editor dependency service reports editor_available=false.
+Local credentials are in ignored .env. Database, queue and science ports are not published to the host. The API and jobs run separately. Guests explore; accounts save progress; redeemed invitations permit remote compute. Authentication stays local and registration is enabled by default. The isolated editor dependency service still requires frontend integration.
 
 ## Verify
 
 ```powershell
 .\scripts\verify.ps1
 .\scripts\verify-science.ps1
+.\scripts\test-backend.ps1 -LiveSources
 docker compose --profile tools run --rm --no-deps tooling npm run typecheck
 docker compose --profile tools run --rm --no-deps tooling npm audit --audit-level=moderate
 ```
 
-Smoke checks exercise dependencies and small numerical fixtures, not validation of future Senku educational models. Recorded image identities and evidence are in [environment verification](docs/environment-verification.json).
+The backend suite uses unique database/queue/storage namespaces and real solver containers. It covers authorization, concurrency, offline rewards, jobs, cancellation, collaboration, artifacts and investigations. Reference tests verify implementation behavior; they do not establish empirical biological validity. Live Gemini and production infrastructure still require real project credentials and deployment evidence.
 
 ## Linux and macOS
 
-Create .env from .env.example and replace both password placeholders with distinct random secrets. Then:
+Create .env from .env.example and replace every secret placeholder with a distinct random secret. Then:
 
 ```sh
 docker compose up --build -d --wait
@@ -69,9 +84,9 @@ Named volumes retain data across normal shutdowns. Adding -v deletes them; use i
 ## Repository layout
 
 ```text
-apps/web/                    Next.js web scaffold
-apps/api/                    NestJS API scaffold
-packages/experiment-schema/  Shared contract foundation
+apps/web/                    Next.js learner, lab, research and classroom application
+apps/api/                    NestJS API, jobs, migrations and integration tests
+packages/experiment-schema/  Versioned experiment contract and local kernels
 services/workers/            Eight scientific environments
 services/molecule-editor/    Isolated React 18 / Ketcher dependencies
 infra/docker/                Native/storage/lock-builder Dockerfiles

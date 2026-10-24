@@ -4,7 +4,7 @@
 
 Senku is a biology-first, experiment-driven learning platform backed by a reproducible scientific core. Learners predict, manipulate, observe, explain and reflect. Learn, Lab, Challenges, Discover and Classroom share versioned experiments, models, solver results and provenance. BioForge is integrated scientific infrastructure, not a separate product.
 
-Read docs/README.md, docs/launch-brief.md, docs/status.md and docs/decisions.md first. Read task-specific topics rather than the entire archive every turn. Current state: verified Docker/dependency bootstrap; web/API health scaffolding only, no learner platform or scientific adapters implemented. Keep planned, proposed, implemented, tested and scientifically validated distinct.
+Read docs/README.md, docs/launch-brief.md, docs/status.md and docs/decisions.md first. Read task-specific topics rather than the entire archive every turn. Current state: backend services, migrations and seven scientific adapters are implemented locally; read docs/backend.md and docs/backend-coverage.md for behavior, tests and external deployment limits. Frontend work is separate. Keep planned, proposed, implemented, tested and scientifically validated distinct.
 
 ## Authority
 
@@ -25,10 +25,14 @@ Explicit current user requirements govern conflicting design suggestions. The ar
 |---|---|
 | Product/UI | docs/product.md; docs/frontend/DESIGN.md; docs/frontend/FRONTEND_CONTRACT.md |
 | Models/adapters | docs/science.md; docs/experiments.md; docs/contracts.md; docs/quality.md |
-| API/data/events | docs/architecture.md; docs/contracts.md; docs/operations.md |
+| API/data/events | docs/backend.md; docs/architecture.md; docs/contracts.md; docs/operations.md |
 | AI/compute | docs/ai-and-safety.md; docs/contracts.md; docs/quality.md |
 | Offline | docs/offline.md; docs/contracts.md; docs/quality.md |
 | Planning | docs/roadmap.md; docs/decisions.md; docs/status.md |
+
+## Parallel frontend/backend work
+
+Latest user direction: Codex owns the full implementation, including frontend, and may use parallel agents. Prior Cursor ownership is superseded. Read docs/INTEGRATION.md for contracts and current file ownership. Local/simple auth only, no Firebase; prioritize working integration. Preserve existing work and coordinate shared file/lock changes.
 
 ## Engineering workflow
 

@@ -1,0 +1,41 @@
+name: Backend verification
+on:
+  workflow_dispatch:
+  pull_request:
+    paths: ['apps/api/**', 'packages/experiment-schema/**', 'services/workers/**', 'scripts/**', 'Dockerfile', 'compose.yaml', 'package*.json', '.github/workflows/backend.yml']
+  push:
+    branches: [master]
+    paths: ['apps/api/**', 'packages/experiment-schema/**', 'services/workers/**', 'scripts/**', 'Dockerfile', 'compose.yaml', 'package*.json', '.github/workflows/backend.yml']
+permissions:
+  contents: read
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  backend:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Generate ephemeral local credentials
+        run: |
+          $taskText=Get-Content .env.example -Raw
+          foreach($taskKey in @('POSTGRES_PASSWORD','MINIO_ROOT_PASSWORD','SCIENCE_TOKEN','OFFLINE_SIGNING_KEY')) {
+            $taskBytes=New-Object byte[] 32
+            [Security.Cryptography.RandomNumberGenerator]::Fill($taskBytes)
+            $taskText=$taskText.Replace("${taskKey}=REPLACE_WITH_RANDOM_SECRET","${taskKey}=$([Convert]::ToHexString($taskBytes).ToLower())")
+          }
+          [IO.File]::WriteAllText((Join-Path (Get-Location) '.env'),$taskText)
+      - name: Run isolated backend and native science verification
+        run: ./scripts/test-backend.ps1
+      - name: Inspect service state after failure
+        if: failure()
+        run: docker compose --profile science ps --all
+      - name: Stop ephemeral infrastructure
+        if: always()
+        run: docker compose --profile science down
