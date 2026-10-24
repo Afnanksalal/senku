@@ -1,0 +1,547 @@
+{
+  "next": {
+    "version": "16.4.3",
+    "peers": {
+      "sass": "^1.3.0",
+      "react": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+      "react-dom": "^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0",
+      "@playwright/test": "^1.51.1",
+      "@opentelemetry/api": "^1.1.0",
+      "babel-plugin-react-compiler": "*"
+    },
+    "engines": {
+      "node": ">=20.9.0"
+    }
+  },
+  "react": {
+    "version": "19.3.1",
+    "peers": {},
+    "engines": {
+      "node": ">=0.10.0"
+    }
+  },
+  "react-dom": {
+    "version": "19.3.1",
+    "peers": {
+      "react": "^19.3.1"
+    },
+    "engines": {}
+  },
+  "@react-three/fiber": {
+    "version": "9.8.2",
+    "peers": {
+      "expo": ">=43.0",
+      "react": ">=19 <19.4",
+      "three": ">=0.156",
+      "expo-gl": ">=11.0",
+      "react-dom": ">=19 <19.4",
+      "expo-asset": ">=8.4",
+      "react-native": ">=0.78",
+      "expo-file-system": ">=11.0"
+    },
+    "engines": {}
+  },
+  "@react-three/drei": {
+    "version": "10.7.9",
+    "peers": {
+      "react": "^19",
+      "three": ">=0.159",
+      "react-dom": "^19",
+      "@react-three/fiber": "^9.0.0"
+    },
+    "engines": {}
+  },
+  "three": {
+    "version": "0.186.1",
+    "peers": {},
+    "engines": {}
+  },
+  "@nestjs/core": {
+    "version": "12.2.0",
+    "peers": {
+      "rxjs": "^7.1.0",
+      "@nestjs/common": "^12.0.0",
+      "reflect-metadata": "^0.1.12 || ^0.2.0",
+      "@nestjs/websockets": "^12.0.0",
+      "@nestjs/microservices": "^12.0.0",
+      "@nestjs/platform-express": "^12.0.0"
+    },
+    "engines": {
+      "node": ">= 20"
+    }
+  },
+  "@nestjs/common": {
+    "version": "12.2.0",
+    "peers": {
+      "rxjs": "^7.1.0",
+      "class-validator": ">=0.13.2",
+      "reflect-metadata": "^0.1.12 || ^0.2.0",
+      "class-transformer": ">=0.4.1"
+    },
+    "engines": {}
+  },
+  "@nestjs/platform-express": {
+    "version": "12.2.0",
+    "peers": {
+      "@nestjs/core": "^12.0.0",
+      "@nestjs/common": "^12.0.0"
+    },
+    "engines": {}
+  },
+  "@nestjs/websockets": {
+    "version": "12.2.0",
+    "peers": {
+      "rxjs": "^7.1.0",
+      "@nestjs/core": "^12.0.0",
+      "@nestjs/common": "^12.0.0",
+      "reflect-metadata": "^0.1.12 || ^0.2.0",
+      "@nestjs/platform-socket.io": "^12.0.0"
+    },
+    "engines": {}
+  },
+  "@nestjs/platform-socket.io": {
+    "version": "12.2.0",
+    "peers": {
+      "rxjs": "^7.1.0",
+      "@nestjs/common": "^12.0.0",
+      "@nestjs/websockets": "^12.0.0"
+    },
+    "engines": {}
+  },
+  "@nestjs/config": {
+    "version": "12.0.1",
+    "peers": {
+      "rxjs": "^7.1.0",
+      "@nestjs/common": "^11.0.0 || ^12.0.0"
+    },
+    "engines": {}
+  },
+  "@nestjs/swagger": {
+    "version": "12.0.4",
+    "peers": {
+      "typescript": "^5.5.0 || ^6.0.0",
+      "@nestjs/core": "^12.0.0",
+      "@nestjs/common": "^12.0.0",
+      "@fastify/static": "^8.0.0 || ^9.0.0 || ^10.0.0",
+      "class-validator": "*",
+      "reflect-metadata": "^0.1.12 || ^0.2.0",
+      "class-transformer": "*"
+    },
+    "engines": {
+      "node": "^20.19.0 || >=22.12.0"
+    }
+  },
+  "@radix-ui/react-dialog": {
+    "version": "1.3.1",
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*",
+      "@types/react-dom": "*"
+    },
+    "engines": {}
+  },
+  "@radix-ui/react-tabs": {
+    "version": "1.2.1",
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*",
+      "@types/react-dom": "*"
+    },
+    "engines": {}
+  },
+  "@radix-ui/react-slider": {
+    "version": "1.6.1",
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*",
+      "@types/react-dom": "*"
+    },
+    "engines": {}
+  },
+  "@radix-ui/react-tooltip": {
+    "version": "1.4.1",
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*",
+      "@types/react-dom": "*"
+    },
+    "engines": {}
+  },
+  "@radix-ui/react-dropdown-menu": {
+    "version": "2.2.1",
+    "peers": {
+      "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
+      "@types/react": "*",
+      "@types/react-dom": "*"
+    },
+    "engines": {}
+  },
+  "tailwindcss": {
+    "version": "4.3.3",
+    "peers": {},
+    "engines": {}
+  },
+  "@tailwindcss/postcss": {
+    "version": "4.3.3",
+    "peers": {},
+    "engines": {}
+  },
+  "@gsap/react": {
+    "version": "2.1.2",
+    "peers": {
+      "gsap": "^3.12.5",
+      "react": ">=17"
+    },
+    "engines": {}
+  },
+  "gsap": {
+    "version": "3.15.0",
+    "peers": {},
+    "engines": {}
+  },
+  "echarts": {
+    "version": "6.1.0",
+    "peers": {},
+    "engines": {}
+  },
+  "molstar": {
+    "version": "5.13.1",
+    "peers": {
+      "gl": ">=6 <9",
+      "pngjs": "^6.0.0",
+      "react": ">=16.14.0",
+      "canvas": "^2.11.2",
+      "jpeg-js": "^0.4.4",
+      "react-dom": ">=16.14.0",
+      "@google-cloud/storage": "^7.14.0"
+    },
+    "engines": {
+      "node": ">=22.0.0"
+    }
+  },
+  "@xyflow/react": {
+    "version": "12.12.0",
+    "peers": {
+      "react": ">=17",
+      "react-dom": ">=17",
+      "@types/react": ">=17",
+      "@types/react-dom": ">=17"
+    },
+    "engines": {}
+  },
+  "zustand": {
+    "version": "5.0.16",
+    "peers": {
+      "immer": ">=9.0.6",
+      "react": ">=18.0.0",
+      "@types/react": ">=18.0.0",
+      "use-sync-external-store": ">=1.2.0"
+    },
+    "engines": {
+      "node": ">=12.20.0"
+    }
+  },
+  "@tanstack/react-query": {
+    "version": "5.104.5",
+    "peers": {
+      "react": "^18 || ^19",
+      "@types/react": "^18 || ^19"
+    },
+    "engines": {}
+  },
+  "react-hook-form": {
+    "version": "7.91.0",
+    "peers": {
+      "react": "^16.8.0 || ^17 || ^18 || ^19",
+      "@types/react": "*"
+    },
+    "engines": {
+      "node": ">=18.0.0"
+    }
+  },
+  "@hookform/resolvers": {
+    "version": "6.0.0",
+    "peers": {
+      "ajv": "^8.12.0",
+      "joi": "^17.0.0 || ^18.0.0",
+      "yup": "^1.0.0",
+      "zod": "^3.25.0 || ^4.0.0",
+      "vest": ">=6.0.0",
+      "fp-ts": "^2.7.0",
+      "io-ts": "^2.0.0",
+      "effect": "^4.0.0",
+      "arktype": "^2.0.0",
+      "valibot": ">=0.31.0 || ^1.0.0-beta.4 || ^1.0.0-rc",
+      "typanion": "^3.3.2",
+      "ajv-errors": "^3.0.0",
+      "ajv-formats": "^2.1.1",
+      "superstruct": ">=0.12.0",
+      "@vinejs/vine": "^2.0.0 || ^3.0.0 || ^4.0.0",
+      "ata-validator": "^1.23.0",
+      "computed-types": "^1.0.0",
+      "nope-validator": ">=0.12.0",
+      "class-validator": ">=0.12.0",
+      "react-hook-form": "^7.55.0",
+      "@typeschema/main": ">=0.13.7",
+      "@sinclair/typebox": ">=0.25.24",
+      "class-transformer": ">=0.4.0",
+      "fluentvalidation-ts": "^3.0.0",
+      "@standard-schema/spec": "^1.0.0"
+    },
+    "engines": {}
+  },
+  "zod": {
+    "version": "4.6.7",
+    "peers": {},
+    "engines": {}
+  },
+  "idb": {
+    "version": "8.0.4",
+    "peers": {},
+    "engines": {}
+  },
+  "yjs": {
+    "version": "13.6.33",
+    "peers": {},
+    "engines": {
+      "npm": ">=8.0.0",
+      "node": ">=16.0.0"
+    }
+  },
+  "y-protocols": {
+    "version": "1.0.7",
+    "peers": {
+      "yjs": "^13.0.0"
+    },
+    "engines": {
+      "npm": ">=8.0.0",
+      "node": ">=16.0.0"
+    }
+  },
+  "socket.io": {
+    "version": "4.8.4",
+    "peers": {},
+    "engines": {
+      "node": ">=10.2.0"
+    }
+  },
+  "socket.io-client": {
+    "version": "4.8.4",
+    "peers": {},
+    "engines": {
+      "node": ">=10.0.0"
+    }
+  },
+  "bullmq": {
+    "version": "6.4.1",
+    "peers": {
+      "pg": ">=8.0.0",
+      "redis": ">=5.0.0",
+      "ioredis": ">=5.0.0",
+      "bullmq-otel": ">=2.0.0"
+    },
+    "engines": {
+      "node": ">=14.17.0"
+    }
+  },
+  "ioredis": {
+    "version": "6.0.0",
+    "peers": {},
+    "engines": {
+      "node": ">=20.0.0"
+    }
+  },
+  "drizzle-orm": {
+    "version": "0.45.4",
+    "peers": {
+      "pg": ">=8",
+      "gel": ">=2",
+      "knex": "*",
+      "kysely": "*",
+      "mysql2": ">=2",
+      "sql.js": ">=1",
+      "sqlite3": ">=5",
+      "postgres": ">=3",
+      "@types/pg": "*",
+      "bun-types": "*",
+      "@netlify/db": ">=0.4.0",
+      "expo-sqlite": ">=14.0.0",
+      "@types/sql.js": "*",
+      "@libsql/client": ">=0.10.0",
+      "@prisma/client": "*",
+      "@upstash/redis": ">=1.34.7",
+      "better-sqlite3": ">=7",
+      "@xata.io/client": "*",
+      "@vercel/postgres": ">=0.8.0",
+      "@opentelemetry/api": "^1.4.1",
+      "@libsql/client-wasm": ">=0.10.0",
+      "@electric-sql/pglite": ">=0.2.0",
+      "@planetscale/database": ">=1.13",
+      "@tidbcloud/serverless": "*",
+      "@types/better-sqlite3": "*",
+      "@aws-sdk/client-rds-data": ">=3",
+      "@neondatabase/serverless": ">=0.10.0",
+      "@cloudflare/workers-types": ">=4",
+      "@op-engineering/op-sqlite": ">=2"
+    },
+    "engines": {}
+  },
+  "drizzle-kit": {
+    "version": "0.31.11",
+    "peers": {},
+    "engines": {}
+  },
+  "pg": {
+    "version": "8.23.1",
+    "peers": {
+      "pg-native": ">=3.0.1"
+    },
+    "engines": {
+      "node": ">= 16.0.0"
+    }
+  },
+  "@google/genai": {
+    "version": "2.31.0",
+    "peers": {
+      "@modelcontextprotocol/sdk": "^1.25.2"
+    },
+    "engines": {
+      "node": ">=20.0.0"
+    }
+  },
+  "@google-cloud/storage": {
+    "version": "8.4.0",
+    "peers": {},
+    "engines": {
+      "node": ">=22"
+    }
+  },
+  "firebase-admin": {
+    "version": "14.5.0",
+    "peers": {},
+    "engines": {
+      "node": ">=22"
+    }
+  },
+  "firebase": {
+    "version": "13.1.0",
+    "peers": {},
+    "engines": {}
+  },
+  "@aws-sdk/client-s3": {
+    "version": "3.1156.0",
+    "peers": {},
+    "engines": {
+      "node": ">=20.0.0"
+    }
+  },
+  "class-validator": {
+    "version": "0.15.1",
+    "peers": {},
+    "engines": {}
+  },
+  "class-transformer": {
+    "version": "0.5.1",
+    "peers": {},
+    "engines": {}
+  },
+  "reflect-metadata": {
+    "version": "0.2.2",
+    "peers": {},
+    "engines": {}
+  },
+  "rxjs": {
+    "version": "7.8.2",
+    "peers": {},
+    "engines": {}
+  },
+  "typescript": {
+    "version": "7.0.2",
+    "peers": {},
+    "engines": {
+      "node": ">=16.20.0"
+    }
+  },
+  "tsx": {
+    "version": "4.23.15",
+    "peers": {},
+    "engines": {
+      "node": ">=18.0.0"
+    }
+  },
+  "vitest": {
+    "version": "5.0.5",
+    "peers": {
+      "vite": "^6.4.0 || ^7.0.0 || ^8.0.0",
+      "jsdom": "*",
+      "happy-dom": "*",
+      "@vitest/ui": "5.0.5",
+      "@types/node": "^22.0.0 || >=24.0.0",
+      "@edge-runtime/vm": "*",
+      "@opentelemetry/api": "^1.9.0",
+      "@vitest/coverage-v8": "5.0.5",
+      "@vitest/browser-preview": "5.0.5",
+      "@vitest/coverage-istanbul": "5.0.5",
+      "@vitest/browser-playwright": "5.0.5",
+      "@vitest/browser-webdriverio": "^5.0.0-beta.5 || >=5.0.0"
+    },
+    "engines": {
+      "node": "^22.12.0 || ^24.0.0 || >=26.0.0"
+    }
+  },
+  "@playwright/test": {
+    "version": "1.64.1",
+    "peers": {},
+    "engines": {
+      "node": ">=20"
+    }
+  },
+  "@axe-core/playwright": {
+    "version": "4.14.0",
+    "peers": {
+      "playwright-core": ">= 1.0.0"
+    },
+    "engines": {
+      "node": ">=22.12.0"
+    }
+  },
+  "@types/node": {
+    "version": "26.6.5",
+    "peers": {},
+    "engines": {}
+  },
+  "@types/react": {
+    "version": "19.3.0",
+    "peers": {},
+    "engines": {}
+  },
+  "@types/react-dom": {
+    "version": "19.3.0",
+    "peers": {
+      "@types/react": "^19.3.0"
+    },
+    "engines": {}
+  },
+  "@types/three": {
+    "version": "0.186.0",
+    "peers": {},
+    "engines": {}
+  },
+  "@types/pg": {
+    "version": "8.23.1",
+    "peers": {},
+    "engines": {}
+  },
+  "concurrently": {
+    "version": "10.0.6",
+    "peers": {},
+    "engines": {
+      "node": ">=22"
+    }
+  }
+}

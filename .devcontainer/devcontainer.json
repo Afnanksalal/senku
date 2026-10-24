@@ -1,0 +1,15 @@
+{
+  "name": "Senku Docker development",
+  "image": "node:24-bookworm-slim",
+  "workspaceFolder": "/workspaces/senku",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/senku,type=bind",
+  "mounts": [
+    "source=senku-dev-node-modules,target=/workspaces/senku/node_modules,type=volume"
+  ],
+  "postCreateCommand": "npm ci",
+  "forwardPorts": [
+    3000,
+    3001
+  ],
+  "remoteUser": "root"
+}

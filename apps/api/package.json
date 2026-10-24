@@ -1,0 +1,39 @@
+{
+  "name": "@senku/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/core": "12.2.0",
+    "@nestjs/common": "12.2.0",
+    "@nestjs/platform-express": "12.2.0",
+    "@nestjs/websockets": "12.2.0",
+    "@nestjs/platform-socket.io": "12.2.0",
+    "@nestjs/config": "12.0.1",
+    "@nestjs/swagger": "12.0.4",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2",
+    "class-validator": "0.15.1",
+    "class-transformer": "0.5.1",
+    "socket.io": "4.8.4",
+    "bullmq": "6.4.1",
+    "ioredis": "6.0.0",
+    "drizzle-orm": "0.45.4",
+    "pg": "8.23.1",
+    "@google/genai": "2.31.0",
+    "firebase-admin": "14.5.0",
+    "@aws-sdk/client-s3": "3.1156.0",
+    "zod": "4.6.7",
+    "@senku/experiment-schema": "*"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.11",
+    "@types/pg": "8.23.1"
+  },
+  "license": "MIT"
+}

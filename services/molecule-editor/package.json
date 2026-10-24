@@ -1,0 +1,16 @@
+{
+  "name": "@senku/molecule-editor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Isolated React 18 dependency boundary for Ketcher; future integration through a separate browser document.",
+  "dependencies": {
+    "ketcher-react": "3.18.0",
+    "ketcher-standalone": "3.18.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "overrides": {
+    "uuid": "11.1.1"
+  },
+  "license": "MIT"
+}

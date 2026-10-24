@@ -1,0 +1,207 @@
+{
+  "date": "2026-10-24",
+  "stage": "dependency-bootstrap",
+  "docker_desktop": "4.96.3",
+  "docker_engine": "29.9.2",
+  "compose": "5.6.1",
+  "services": [
+    {
+      "service": "api",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "biosimulators",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "cobrapy",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "copasi",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "minio",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "molecule-editor",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "numerics",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "physicell",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "postgres",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "rdkit",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "redis",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "roadrunner",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "tellurium",
+      "state": "running",
+      "health": "healthy"
+    },
+    {
+      "service": "web",
+      "state": "running",
+      "health": "healthy"
+    }
+  ],
+  "images": [
+    {
+      "service": "api",
+      "image": "senku-api",
+      "image_id": "sha256:aab8491d0abdd23f3864d93c4cf33c89ae67eadb17d1072b41896731bf6b0ba1",
+      "repository_digests": [
+        "senku-api@sha256:aab8491d0abdd23f3864d93c4cf33c89ae67eadb17d1072b41896731bf6b0ba1"
+      ]
+    },
+    {
+      "service": "biosimulators",
+      "image": "senku-biosimulators",
+      "image_id": "sha256:1fe8d6e5f209c40e2afe6645bfd1ee335c7d7df8ac7d6f419a02b81635f1e5e2",
+      "repository_digests": [
+        "senku-biosimulators@sha256:1fe8d6e5f209c40e2afe6645bfd1ee335c7d7df8ac7d6f419a02b81635f1e5e2"
+      ]
+    },
+    {
+      "service": "cobrapy",
+      "image": "senku-cobrapy",
+      "image_id": "sha256:6d4b998fcc084c6765d2786c3d012785448df648a335acfb89ec3e9599bef5b2",
+      "repository_digests": [
+        "senku-cobrapy@sha256:6d4b998fcc084c6765d2786c3d012785448df648a335acfb89ec3e9599bef5b2"
+      ]
+    },
+    {
+      "service": "copasi",
+      "image": "senku-copasi",
+      "image_id": "sha256:c821a7f6e21e368c71fb1b960a5e132c9188842820e686fc3f8db4d1bcf545f4",
+      "repository_digests": [
+        "senku-copasi@sha256:c821a7f6e21e368c71fb1b960a5e132c9188842820e686fc3f8db4d1bcf545f4"
+      ]
+    },
+    {
+      "service": "minio",
+      "image": "senku-minio",
+      "image_id": "sha256:0f4d3be95c1ae15b423eba669167c8fafd08d2d02c8572d9b700c30396f3f634",
+      "repository_digests": [
+        "senku-minio@sha256:0f4d3be95c1ae15b423eba669167c8fafd08d2d02c8572d9b700c30396f3f634"
+      ]
+    },
+    {
+      "service": "molecule-editor",
+      "image": "senku-molecule-editor",
+      "image_id": "sha256:960e8928b4145c88f7676dd702614fec7d84861728ce0de5d6eba2dbb502fdd3",
+      "repository_digests": [
+        "senku-molecule-editor@sha256:960e8928b4145c88f7676dd702614fec7d84861728ce0de5d6eba2dbb502fdd3"
+      ]
+    },
+    {
+      "service": "numerics",
+      "image": "senku-numerics",
+      "image_id": "sha256:ad0c3c51a82c9f5e78679b6b1d7d9c34aaca0b8c6dd3b259bb29129f97043527",
+      "repository_digests": [
+        "senku-numerics@sha256:ad0c3c51a82c9f5e78679b6b1d7d9c34aaca0b8c6dd3b259bb29129f97043527"
+      ]
+    },
+    {
+      "service": "physicell",
+      "image": "senku-physicell",
+      "image_id": "sha256:91866a59c34ff94a1dfee32f6b069d69f81efd46528106ccda803359dc480140",
+      "repository_digests": [
+        "senku-physicell@sha256:91866a59c34ff94a1dfee32f6b069d69f81efd46528106ccda803359dc480140"
+      ]
+    },
+    {
+      "service": "postgres",
+      "image": "postgres:17-bookworm@sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27",
+      "image_id": "sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27",
+      "repository_digests": [
+        "postgres@sha256:858bb5e98eed02eb8cafbcdc007f9a65d1b613972028944a8ec2133ccaf80d27"
+      ]
+    },
+    {
+      "service": "rdkit",
+      "image": "senku-rdkit",
+      "image_id": "sha256:ddd4d0924e7cef969d8cb5500a723b3c55798541357cb9cbb13586879da5f7d9",
+      "repository_digests": [
+        "senku-rdkit@sha256:ddd4d0924e7cef969d8cb5500a723b3c55798541357cb9cbb13586879da5f7d9"
+      ]
+    },
+    {
+      "service": "redis",
+      "image": "redis:7.4-bookworm@sha256:44960b3100c48159a66d28c18b0588c193492e25f7551d60e51dd464fc3eca5b",
+      "image_id": "sha256:44960b3100c48159a66d28c18b0588c193492e25f7551d60e51dd464fc3eca5b",
+      "repository_digests": [
+        "redis@sha256:44960b3100c48159a66d28c18b0588c193492e25f7551d60e51dd464fc3eca5b"
+      ]
+    },
+    {
+      "service": "roadrunner",
+      "image": "senku-roadrunner",
+      "image_id": "sha256:e1049f9b61eb529fca722fef6d979a3d1b26d6287b366cc076f56f858761df28",
+      "repository_digests": [
+        "senku-roadrunner@sha256:e1049f9b61eb529fca722fef6d979a3d1b26d6287b366cc076f56f858761df28"
+      ]
+    },
+    {
+      "service": "tellurium",
+      "image": "senku-tellurium",
+      "image_id": "sha256:5cc81f79f9653d40b8aa442259e5efe85880500b2914118d644da5d75e1acde4",
+      "repository_digests": [
+        "senku-tellurium@sha256:5cc81f79f9653d40b8aa442259e5efe85880500b2914118d644da5d75e1acde4"
+      ]
+    },
+    {
+      "service": "web",
+      "image": "senku-web",
+      "image_id": "sha256:eb0a87e98285f90e20135fd117228fc3a8d1d60982c3315943162fa3ca15c57c",
+      "repository_digests": [
+        "senku-web@sha256:eb0a87e98285f90e20135fd117228fc3a8d1d60982c3315943162fa3ca15c57c"
+      ]
+    }
+  ],
+  "verification": {
+    "workspace_typecheck": "passed in Docker",
+    "main_npm_audit": "zero reported vulnerabilities",
+    "editor_npm_audit": "zero reported vulnerabilities in ephemeral networked audit container",
+    "main_and_editor_dependency_trees": "no dependency problems",
+    "web_api_health": "passed",
+    "postgres_query": "passed",
+    "bullmq_job_roundtrip": "passed",
+    "s3_object_roundtrip": "passed",
+    "minio_console_http": "200",
+    "scientific_smoke": "8 of 8 passed; dependency/toy solver checks, not model validation",
+    "worker_external_route": "numerics external TCP route blocked",
+    "secret_ignore": ".env ignored by Git"
+  }
+}

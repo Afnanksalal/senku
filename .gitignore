@@ -1,0 +1,65 @@
+# Dependencies and generated builds
+node_modules/
+.next/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+!.env.*.example
+.secrets/
+secrets/
+credentials/
+.config/gcloud/
+application_default_credentials.json
+service-account*.json
+service_account*.json
+*-credentials.json
+*_credentials.json
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+.npmrc.local
+
+# Python / native build output
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+*.o
+*.obj
+
+# Local data, artifacts and scratch files
+work/
+artifacts/
+backups/
+*.log
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+compose.override.yaml
+compose.override.yml
+
+# Editor and operating-system state
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo

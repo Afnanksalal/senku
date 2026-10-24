@@ -1,0 +1,17 @@
+* text=auto
+*.md text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.cjs text eol=lf
+*.mjs text eol=lf
+*.py text eol=lf
+*.ps1 text eol=lf
+*.lock text eol=lf
+Dockerfile text eol=lf
+*.Dockerfile text eol=lf
+# Keep the original supplied masterplan byte-for-byte.
+docs/source/Senku_Detailed_Plan.md -text
