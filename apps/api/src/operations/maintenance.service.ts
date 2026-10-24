@@ -82,6 +82,10 @@ export class MaintenanceService {
           'idempotency_keys',
           'share_links',
           'companion_responses',
+          'dynamic_challenge_feedback',
+          'dynamic_challenges',
+          'personalized_missions',
+          'ai_intents',
         ])
           await tx.query(`DELETE FROM ${table} WHERE owner_id=$1`, [id]);
         await tx.query('DELETE FROM durable_events WHERE owner_id=$1', [id]);

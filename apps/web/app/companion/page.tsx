@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { SelectField } from '../../components/SelectField';
 import { CompanionChat } from '../../components/CompanionChat';
 import { Mascot } from '../../components/Mascot';
 import { ErrorState } from '../../components/States';
@@ -22,9 +23,9 @@ export default function CompanionPage() {
     {catalog.error ? <ErrorState error={catalog.error} retry={() => void catalog.refetch()} what="experiment list" home /> : !experiment ? <div className="skeleton" style={{ height: 320 }} aria-label="Loading experiments" /> : <div className={styles.workspace}>
       <aside className={`glass panel ${styles.context}`} aria-label="Conversation context">
         <h2 style={{ fontSize: '1.2rem' }}>What are we exploring?</h2>
-        <label className="field"><span>Experiment</span><select className="input" value={experiment.id} onChange={(e) => { setExperimentId(e.target.value); setRunId(''); }}>{catalog.data?.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}</select></label>
-        <label className="field"><span>Evidence</span><select className="input" value={run?.id ?? ''} onChange={(e) => setRunId(e.target.value)}><option value="">Model concepts only</option>{completed.map((r) => <option key={r.id} value={r.id}>Run {shortId(r.id)}, {when(r.created_at)}</option>)}</select></label>
-        <p className="faint">Only completed lab-server results can be attached. A concept conversation has no measured result attached.</p>
+        <label className="field"><span>Experiment</span><SelectField label="Experiment" value={experiment.id} onValueChange={(value) => { setExperimentId(value); setRunId(''); }} options={(catalog.data ?? []).map((e) => ({ value: e.id, label: e.name }))}/></label>
+        <label className="field"><span>Evidence</span><SelectField label="Evidence" value={run?.id ?? ''} onValueChange={setRunId} options={[{ value: '', label: 'Model concepts only' }, ...completed.map((r) => ({ value: r.id, label: `Run ${shortId(r.id)}, ${when(r.created_at)}` }))]}/></label>
+        <p className="faint">Completed lab results can be attached. A concept conversation has no measured result attached.</p>
         <Link className="btn quiet small" href={`/lab/${experiment.id}?v=${experiment.version}${run ? `&runs=${run.id}` : ''}`}>Open this experiment</Link>
         <details className="more"><summary>About this model</summary><div className="stack snug" style={{ paddingTop: '.65rem' }}><p>{experiment.description}</p><ul className="list">{experiment.model.limitations.map((item) => <li key={item}>{item}</li>)}</ul></div></details>
       </aside>

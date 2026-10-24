@@ -1,0 +1,102 @@
+.welcome { --welcome-gap: clamp(4rem, 9vw, 8rem); width: min(1400px, 100% - 2 * var(--page-gutter)); margin-inline: auto; padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
+.welcome *, .welcome *::before, .welcome *::after { min-width: 0; }
+.welcome h2 { min-width: 0; max-width: 100%; overflow-wrap: anywhere; font-size: clamp(2rem, 3.9vw, 3.7rem); line-height: 1.07; letter-spacing: -.035em; text-wrap: balance; }
+.welcome p { overflow-wrap: anywhere; }
+.hero { display: grid; grid-template-columns: minmax(0, 1fr); gap: .5rem; align-items: center; padding-top: clamp(2.5rem, 6vw, 5.5rem); }
+.heroCopy { display: grid; justify-items: start; gap: 1.6rem; position: relative; z-index: 2; }
+.introduction { display: inline-flex; align-items: center; gap: .5rem; color: var(--ink-soft); font-size: .95rem; font-weight: 800; }
+.heroCopy h1 { font-size: clamp(3rem, 5.8vw, 5.8rem); letter-spacing: -.055em; line-height: 1.03; margin-left: -.045em; text-wrap: initial; }
+.heroCopy h1 span { color: var(--chlorophyll-deep); }
+.heroDescription { max-width: 37rem; font-size: clamp(1.08rem, 1.7vw, 1.3rem); line-height: 1.65; color: var(--ink-soft); }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.primary { --tone: var(--chlorophyll-deep); --tone-deep: var(--ink); min-height: 54px; padding: .8rem 1.4rem; font-size: 1rem; }
+.secondary { min-height: 54px; padding: .8rem 1.4rem; }
+.guestNote { font-size: .86rem; color: var(--ink-soft); }
+.heroWorld { position: relative; display:grid; align-items:center; margin: 1.25rem 0 0; min-height: 380px; padding-bottom: 2rem; isolation: auto; }
+.worldBackdrop { position: absolute; z-index: -1; inset: 10% 4% 13% 6%; background: color-mix(in srgb, var(--chlorophyll) 9%, var(--paper)); border: 1px solid var(--glass-edge); border-radius: 47% 53% 44% 56% / 53% 42% 58% 47%; }
+.worldArt { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: contain; }
+.worldCaption { position: absolute; bottom: 0; right: .5rem; display: grid; gap: .1rem; max-width: min(15rem, 65%); padding: .75rem 1rem; border: 1px solid var(--glass-edge); background: var(--glass-strong); border-radius: 19px 19px 19px 5px; box-shadow: var(--shadow); transform: rotate(-4deg); font-size: .8rem; color: var(--ink-soft); }
+.worldCaption :global(.hand) { color: var(--hema); font-size: 1.9rem; }
+.heroMascot { position: absolute; width: clamp(125px, 18vw, 210px); height: auto; right: 0; bottom: -.5rem; }
+.adventurePaths { display:grid; grid-template-columns:minmax(0,1fr); gap:.75rem; margin-top:2.5rem; }
+.adventurePaths > a { display:flex; align-items:center; gap:.85rem; padding:1rem; border:1px solid var(--glass-edge); border-radius:22px; text-decoration:none; background:var(--glass); transition:background .2s,transform .2s; }
+.adventurePaths > a:hover { background:var(--paper); transform:translateY(-2px); }
+.adventurePaths a > span { display:grid;place-items:center;flex:none;width:44px;height:44px;border-radius:15px;color:var(--c-deep);background:color-mix(in srgb,var(--c) 12%,var(--paper)); }
+.adventurePaths a > div { display:grid;gap:.2rem;flex:1; }
+.adventurePaths strong { font-size:.93rem;line-height:1.3; }
+.adventurePaths small { color:var(--ink-soft);font-size:.8rem; }
+.learningLoop { display: grid; gap: 2rem; margin-top: clamp(2rem, 5vw, 5rem); padding: clamp(1.5rem, 3vw, 2.5rem) 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.loopIntro { display: grid; gap: .6rem; }
+.loopIntro h2 { font-size: clamp(1.5rem, 2.2vw, 2rem); line-height: 1.15; text-wrap: initial; }
+.loopIntro p { color: var(--ink-soft); font-size: .95rem; }
+.loopSteps { display: grid; gap: 1.5rem; list-style: none; margin: 0; padding: 0; }
+.loopSteps li { display: flex; gap: .85rem; align-items: center; }
+.loopSteps h3 { font-size: 1rem; line-height: 1.3; margin-bottom: .25rem; }
+.loopSteps p { font-size: .9rem; line-height: 1.5; color: var(--ink-soft); }
+.stepIcon { display: grid; place-items: center; width: 46px; height: 46px; flex: none; border-radius: 16px; color: var(--hema); background: color-mix(in srgb, var(--hema) 9%, var(--paper)); }
+.firstQuestion { margin-top: var(--welcome-gap); }
+.sectionHeading { display: flex; justify-content: space-between; align-items: end; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+.sectionHeading > div { display: grid; gap: .75rem; }
+.sectionHeading p { color: var(--ink-soft); font-size: 1.08rem; }
+.textLink { display: inline-flex; gap: .5rem; align-items: center; min-height: 44px; font-weight: 800; text-decoration-thickness: 1px; text-underline-offset: .3em; }
+.specimens { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr); }
+.specimen { display: flex; flex-direction: column; border-radius: 25px; background: var(--paper); border: 1px solid var(--glass-edge); box-shadow: var(--shadow); text-decoration: none; overflow: hidden; }
+.specimenArt { position: relative; background: color-mix(in srgb, var(--c) 8%, var(--paper)); aspect-ratio: 4 / 3; display: grid; place-items: center; }
+.specimenArt img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+.specimenGlyph { position: absolute; left: 1rem; top: 1rem; width: 44px; height: 44px; border-radius: 15px; display: grid; place-items: center; color: var(--c-deep); background: var(--paper); }
+.specimenCopy { display: flex; flex-direction: column; align-items: start; gap: .75rem; padding: 1.5rem; flex: 1; }
+.specimenName { color: var(--c-deep); font-size: .86rem; font-weight: 800; }
+.specimenCopy h3 { font-size: clamp(1.35rem, 2vw, 1.65rem); line-height: 1.17; }
+.specimenCopy > p:not(.specimenName) { color: var(--ink-soft); font-size: .95rem; }
+.specimenAction { margin-top: auto; padding-top: .75rem; display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font-size: .92rem; font-weight: 800; }
+.specimen:hover .specimenAction { text-decoration: underline; text-underline-offset: .3em; }
+.playSection, .depthSection { display: grid; align-items: center; gap: 2rem; margin-top: var(--welcome-gap); }
+.playArt { position: relative; background: color-mix(in srgb, var(--eosin) 7%, var(--paper)); border: 1px solid var(--glass-edge); border-radius: 34px; padding: 1.5rem 0 2.75rem; }
+.playArt > img, .depthArt > img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+.handNote { display: block; font-family: var(--font-hand), cursive; text-align: center; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--hema); transform: rotate(-3deg); }
+.storyCopy { display: grid; gap: 1.4rem; justify-items: start; }
+.storyCopy > p, .researchCopy > p { max-width: 41rem; font-size: clamp(1.05rem, 1.5vw, 1.2rem); line-height: 1.75; color: var(--ink-soft); }
+.storyCopy .smallNote { font-size: .85rem; line-height: 1.5; }
+.sectionSymbol { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid color-mix(in srgb, var(--c) 20%, transparent); border-radius: 17px; color: var(--c-deep); background: color-mix(in srgb, var(--c) 8%, var(--paper)); }
+.depthArt { position: relative; display: grid; background: color-mix(in srgb, var(--cobalt) 6%, var(--paper)); border-radius: 48% 48% 24px 24px; border: 1px solid var(--glass-edge); padding: 1rem 0; }
+.depthCaption { justify-self: center; display: flex; align-items: center; justify-content: center; gap: .55rem; margin: 0 1rem; font-size: .84rem; color: var(--ink-soft); text-align: center; }
+.researchSection { display: grid; gap: 2.5rem; margin-top: var(--welcome-gap); }
+.researchCopy { display: grid; gap: 1.4rem; align-content: center; justify-items: start; }
+.researchProof { position: relative; display: grid; align-content: center; gap: 1.75rem; padding: clamp(1.5rem, 4vw, 3rem); background: var(--paper); border: 1px solid var(--glass-edge); border-radius: 30px; box-shadow: var(--shadow); }
+.researchProof h3 { font-size: 1.5rem; padding-right: 5rem; }
+.researchMascot { position: absolute; width: 115px; right: .25rem; top: -2.25rem; }
+.researchProof ol { display: grid; list-style: none; gap: 0; padding: 0; margin: 0; counter-reset: evidence; }
+.researchProof li { position: relative; padding: .25rem 0 1.6rem 2.8rem; counter-increment: evidence; }
+.researchProof li:last-child { padding-bottom: 0; }
+.researchProof li::before { content: counter(evidence); position: absolute; top: .25rem; left: 0; width: 1.8rem; height: 1.8rem; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--hema) 10%, var(--paper)); color: var(--hema); font-weight: 800; font-size: .9rem; z-index: 1; }
+.researchProof li:not(:last-child)::after { content: ''; position: absolute; top: 2rem; left: .85rem; bottom: 0; width: 2px; background: var(--line); }
+.researchProof li span { display: block; font-weight: 800; }
+.researchProof li p { color: var(--ink-soft); font-size: .92rem; line-height: 1.5; margin-top: .3rem; }
+.sourceNames { display: flex; flex-wrap: wrap; gap: .55rem; border-top: 1px solid var(--line); padding-top: 1rem; }
+.sourceNames span { padding: .25rem .6rem; border: 1px solid var(--line); border-radius: 999px; color: var(--ink-soft); font-size: .75rem; font-weight: 800; }
+.offlineSection { display: grid; gap: 1.3rem; align-items: center; padding: clamp(1.5rem, 3vw, 2.5rem); margin-top: var(--welcome-gap); background: color-mix(in srgb, var(--chlorophyll) 8%, var(--paper)); border: 1px solid var(--glass-edge); border-radius: 28px; }
+.offlineIcon { width: 64px; height: 64px; display: grid; place-items: center; color: var(--chlorophyll-deep); border-radius: 22px; background: var(--paper); }
+.offlineSection h2 { font-size: clamp(1.5rem, 2.6vw, 2.2rem); }
+.offlineSection p { color: var(--ink-soft); margin-top: .6rem; max-width: 45rem; }
+.closing { margin-block: var(--welcome-gap); display: grid; gap: 1.5rem; align-items: center; justify-content: center; text-align: center; }
+.closing > img { width: 150px; justify-self: center; }
+.closing > div { display: grid; justify-items: center; gap: 1.3rem; }
+.closing h2 { font-size: clamp(2.5rem, 5.5vw, 5rem); }
+.closing :global(.hand) { font-size: 2rem; }
+.footer { display: grid; gap: 2.5rem 2rem; border-top: 1px solid var(--line); padding-top: 2.5rem; }
+.footerLogo { display: inline-flex; align-items: center; gap: .5rem; font: 800 1.6rem var(--font-display); letter-spacing: -.04em; text-decoration: none; }
+.footerBrand p { margin-top: .65rem; color: var(--ink-soft); font-size: .9rem; }
+.footer nav { display: grid; gap: .3rem; align-content: start; }
+.footer nav h3 { font-size: 1rem; margin-bottom: .55rem; }
+.footer nav a { min-height: 36px; padding-block: .25rem; font-size: .9rem; color: var(--ink-soft); text-decoration: none; }
+.footer nav a:hover { text-decoration: underline; text-underline-offset: .25em; }
+.footerNote { display: grid; gap: .75rem; font-size: .8rem; color: var(--ink-soft); }
+@media (min-width: 560px) { .loopSteps { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } .loopSteps li { display: grid; align-content: start; align-items: start; gap: .85rem; } .specimens { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; } .specimenCopy { padding: 1.1rem; } .footer { grid-template-columns: 1.2fr 1fr 1fr; } .footerNote { grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 860px) { .hero { grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: .5rem; } .heroWorld { margin: 0; } .worldCaption { top: auto; bottom: 0; right: 1rem; } .learningLoop { grid-template-columns: minmax(200px, .9fr) minmax(0, 2fr); align-items: center; gap: 2rem; } .playSection { grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); gap: clamp(2rem, 7vw, 7rem); } .depthSection { grid-template-columns: minmax(0, .9fr) minmax(0, 1fr); gap: clamp(2rem, 7vw, 7rem); } .researchSection { grid-template-columns: minmax(0, 1fr) minmax(0, .8fr); align-items: center; gap: clamp(2rem, 7vw, 6rem); } .offlineSection { grid-template-columns: auto minmax(0, 1fr) auto; } .closing { grid-template-columns: 180px auto; gap: 2rem; text-align: left; } .closing > img { width: 180px; } .closing > div { justify-items: start; } .footer { grid-template-columns: 1.1fr .8fr .8fr 1.3fr; } .footerNote { grid-column: auto; grid-template-columns: minmax(0, 1fr); } }
+@media (min-width: 1200px) { .hero { min-height: 610px;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr); } .heroWorld { min-height:480px; } .specimens { gap: 1.5rem; } .specimenCopy { padding: 1.65rem; } }
+@media (min-width:760px) { .adventurePaths { grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem; } }
+@media (max-width:559px) { .hero { gap:1rem; } .heroCopy { display:contents; } .heroCopy .introduction { order:0; } .heroCopy h1 { order:1;font-size:clamp(2.7rem,10.7vw,3.7rem); } .heroWorld { order:2;min-height:0;padding-bottom:0;margin:0; } .heroWorld .worldArt { margin-top:0;max-height:250px; } .heroWorld .worldCaption { display:none; } .heroDescription { order:3;font-size:1.05rem;line-height:1.6; } .heroCopy .actions { order:4; } .heroCopy .guestNote { order:5; } .adventurePaths { margin-top:2rem; } }
+@media (max-width: 559px) { .welcome { width: calc(100% - 2rem); } .hero { padding-top: 2rem; } .heroCopy { gap: 1.3rem; } .heroCopy h1 { font-size: clamp(2.85rem, 12vw, 4.2rem); } .heroWorld { min-height: 280px; } .heroWorld .worldArt { margin-top: .75rem; } .heroMascot { width: 135px; bottom: -.3rem; } .worldCaption { right: 0; top: .15rem; max-width: min(10.5rem, 65%); padding: .55rem .75rem; } .worldCaption :global(.hand) { font-size: 1.65rem; } .actions { gap: .75rem; } .heroCopy .actions { width: 100%; } .heroCopy .actions > a { flex: 1 1 100%; } .loopIntro h2 br { display: none; } .playSection { gap: 1.7rem; } .depthSection .depthArt { order: -1; } .researchSection { gap: 3.75rem; } .researchProof { padding-top: 2rem; } .offlineSection { justify-items: start; } .closing { margin-block: 4rem; } .footer { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1rem; } .footerBrand, .footerNote { grid-column: 1 / -1; } .footer nav a { min-height: 44px; } }
+@media (prefers-reduced-motion: reduce) { .welcome * { scroll-behavior: auto; } }
+@media (max-width:559px) { .heroCopy h1 { font-size:clamp(2.7rem,10.7vw,3.7rem); } .heroWorld { min-height:0; } .heroWorld .worldArt { margin-top:0; } }
+@media (prefers-reduced-motion:reduce) { .adventurePaths > a { transition:none; } .adventurePaths > a:hover { transform:none; } }

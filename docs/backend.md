@@ -1,6 +1,6 @@
 # Backend implementation and operating guide
 
-Senku now has a NestJS backend, PostgreSQL source of truth, Redis/BullMQ job transport, private S3-compatible artifacts and seven isolated scientific adapters. The frontend is a separate workstream. This document describes implemented behavior; it does not certify a public deployment or empirical biological validity.
+Senku now has a NestJS backend, PostgreSQL source of truth, Redis/BullMQ job transport, private S3-compatible artifacts and eight isolated scientific adapters. The frontend is integrated through the same-origin gateway. This document describes implemented behavior; it does not certify a public deployment or empirical biological validity.
 
 ## Local operation
 
@@ -89,3 +89,15 @@ Run `scripts/test-backend.ps1` to build and test real PostgreSQL/Redis/S3/scient
 Use `scripts/backup-database.ps1` and `scripts/restore-database.ps1 -Archive <dump> -DatabaseName senku_restore_<new-id>`. Restore verifies the checksum and creates a fresh database; it never overwrites the active database. For artifacts, mount a fresh private directory at `/backups` and run `node scripts/backup-artifacts.cjs backup /backups` inside the API image. The manifest preserves keys, metadata, byte lengths and content hashes. To verify restoration, mount that directory read-only, set a new `RESTORE_BUCKET=senku-restore-<id>`, and run the same script with `restore`. It refuses an existing bucket and verifies restored bytes. Backup output belongs in ignored `backups/`, encrypted off-host with restricted access.
 
 For a coordinated recovery set, stop external admissions and let active jobs finish, then stop jobs/maintenance before taking the database and artifact snapshots. Keep both snapshots together, record image/configuration identities, and restart jobs after verifying them. Redis is a recoverable transport; PostgreSQL/outbox preserve pending work. Restore into isolated resources first and exercise authenticated artifact access before changing production endpoints. Retain and test off-host copies on the operator's recovery schedule.
+
+## Natural controls and dynamic challenges
+- POST `/v1/challenges/dynamic`: challenge_id, gentle/curious/stretch difficulty, optional interest. Requires local learner account, compute invitation, Idempotency-Key. Returns owner-private persisted scenario with status, model/version, parameters, fixed seed, approved control labels, actual goal, narrative source and XP rule.
+- GET `/v1/challenges/dynamic/:id`: owner-bound generation recovery. Interrupted generation resolves to explicitly labeled fallback after two minutes.
+- POST `/v1/challenges/dynamic/:id/explain`: retained run_id or local parameters/seed, Idempotency-Key. Server verifies evidence and caches feedback per proof; concurrent retries claim/charge once. Stale feedback resolves to fallback.
+- Existing challenge attempts accept optional scenario_id. The server enforces that scenario's model/version, seed, fixed conditions and recomputed metric; the original reward key remains authoritative.
+- Migration008 persists scenarios and feedback; account export and erasure include both. No generated scripts, arbitrary models, invented results or frontend-supplied XP.
+
+Device-result companion context is also supported: `local:{parameters,seed}` is exclusive with run_id. Only local-capable approved models are accepted, inputs are validated and recalculated on the server, and Gemini receives the verified result with explicit device/non-measurement provenance. Arbitrary browser scalar claims are never accepted.
+
+## Personalized lesson preparation
+POST `/v1/lessons/:lesson/personalize` accepts optional interest, gentle/curious/stretch difficulty and optional variation UUID, requires Idempotency-Key and admitted account. GET `.../personalize/:id` is owner-private recovery. Responses contain versioned public narrative and a validated suggested parameter change, never correct_index or private assessment explanation. Existing attempts accept personalization_id and grade against that owner's completed saved mission. Fixed offline practice retains its signed-pack scoring; the UI does not silently submit personalized answers against a different offline rubric.

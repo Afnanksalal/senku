@@ -44,9 +44,9 @@ __pycache__/
 *.obj
 
 # Local data, artifacts and scratch files
-work/
-artifacts/
-backups/
+/work/
+/artifacts/
+/backups/
 *.log
 *.sqlite
 *.sqlite3
@@ -64,3 +64,6 @@ Desktop.ini
 .vscode/
 *.swp
 *.swo
+
+# Browser verification screenshots
+output/playwright/

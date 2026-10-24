@@ -2,7 +2,7 @@
 .intro h1 { font-size: clamp(2rem, 4vw, 3rem); }
 .intro p { max-width: 54ch; margin-top: .75rem; }
 .workspace { display: grid; grid-template-columns: minmax(220px, .7fr) minmax(0, 1.7fr); gap: 1.25rem; align-items: start; }
-.context { display: grid; gap: 1rem; }
+.context { display: grid; gap: 1.25rem; }
 .context p { overflow-wrap: anywhere; }
 .context select { min-width: 0; }
 .shell { min-width: 0; }
@@ -20,7 +20,7 @@
 .message > header { display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; font-weight: 800; font-size: .85rem; }
 .message footer { font-size: .8rem; color: var(--ink-soft); overflow-wrap: anywhere; }
 .reflection { padding: .75rem; border-left: 3px solid var(--chlorophyll); background: color-mix(in srgb, var(--chlorophyll) 5%, white); border-radius: 0 10px 10px 0; }
-.composer { display: grid; gap: .65rem; padding-top: 1rem; border-top: 1px solid var(--line); }
+.composer { display: grid; gap: 1.25rem; padding-top: 1.25rem; border-top: 1px solid var(--line); }
 .composer textarea { min-height: 6rem; }
 .composerFooter { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; }
 .status { display: flex; gap: .5rem; align-items: center; color: var(--ink-soft); padding-block: .5rem; }
@@ -28,3 +28,6 @@
 .summon p { max-width: 48ch; }
 @media(max-width: 800px) { .workspace { grid-template-columns: minmax(0, 1fr); } }
 @media(max-width: 480px) { .intro { grid-template-columns: minmax(0, 1fr); } .introArt { display: none; } .empty { grid-template-columns: minmax(0, 1fr); } .empty img { width: 64px; } .message { padding: .85rem; } }
+
+.context :global(.field),.composer :global(.field){gap:.5rem;min-width:0}
+.composerFooter{row-gap:1rem}

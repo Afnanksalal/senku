@@ -1,5 +1,5 @@
 import type { RunRecord } from '../lib/runs';
-import { label } from '../lib/format';
+import { resultLanguage, learnerUnit } from '../lib/learner-language';
 
 export type SceneCell={id:number;position:[number,number,number];radius:number;physicalPosition:number[];volume:number};
 export type SceneMetric={name:string;value:number;unit:string;maximum:number};
@@ -39,10 +39,10 @@ export function scientificSceneData(run:RunRecord,index:number):SceneData|null {
     const safeIndex=Math.min(Math.max(0,index),series.data.length-1);
     const row=series.data[safeIndex];
     const maximum=Math.max(1,...series.data.flatMap(r=>r.slice(1)));
-    return {kind:'bars',title:'Model state, schematic',caption:'Column heights encode the saved model quantities at the selected time. The arrangement is a schematic, not a simulation of spatial positions or individual organisms.',time:row[0],times:series.data.map(r=>r[0]),index:safeIndex,maximum,metrics:series.columns.slice(1).map((name,i)=>({name:label(name),value:row[i+1],unit:series.units[i+1]??'',maximum}))};
+    return {kind:'bars',title:'Model state, schematic',caption:'Column heights encode the saved model quantities at the selected time. The arrangement is a schematic, not a simulation of spatial positions or individual organisms.',time:row[0],times:series.data.map(r=>r[0]),index:safeIndex,maximum,metrics:series.columns.slice(1).map((name,i)=>({name:resultLanguage(run.experiment_id,name).name,value:row[i+1],unit:learnerUnit(series.units[i+1]),maximum}))};
   }
   const metrics=Object.entries(result.scalars).filter(([,value])=>finite(value));
   if(!metrics.length)return null;
   const maximum=run.experiment_id==='cell-energy'?100:Math.max(1,...metrics.map(([,v])=>v));
-  return {kind:'bars',title:'Model result, schematic',caption:run.experiment_id==='cell-energy'?'The column encodes the saved energy index on a 0–100 scale. It does not represent ATP molecules or a spatial cell simulation.':'Column heights encode the saved scalar values. This is a schematic comparison, not spatial geometry or a newly computed trajectory.',times:[],index:0,maximum,metrics:metrics.map(([name,value])=>({name:label(name),value,unit:result.units?.[name]??'',maximum}))};
+  return {kind:'bars',title:'Model result, schematic',caption:run.experiment_id==='cell-energy'?'The column encodes the saved energy index on a 0–100 scale. It does not represent ATP molecules or a spatial cell simulation.':'Column heights encode the saved scalar values. This is a schematic comparison, not spatial geometry or a newly computed trajectory.',times:[],index:0,maximum,metrics:metrics.map(([name,value])=>({name:resultLanguage(run.experiment_id,name).name,value,unit:learnerUnit(result.units?.[name]),maximum}))};
 }

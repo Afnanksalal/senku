@@ -1,0 +1,19 @@
+.trigger { display: flex; justify-content: space-between; align-items: center; gap: .75rem; width: 100%; min-width: 0; min-height: 44px; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.9); color: var(--ink); font: inherit; text-align: left; cursor: pointer; }
+.trigger span { min-width: 0; overflow-wrap: anywhere; font: inherit; }
+.trigger:disabled { opacity: .55; cursor: not-allowed; }
+.overlay { position: fixed; z-index: 110; inset: 0; background: rgba(23,38,46,.35); }
+.content { position: fixed; z-index: 111; top: 50%; left: 50%; transform: translate(-50%,-50%); width: min(420px,calc(100vw - 24px)); max-height: calc(100dvh - 24px); overflow-y: auto; overscroll-behavior: contain; padding: 1rem; border: 1px solid var(--glass-edge); border-radius: 22px; background: var(--paper); color: var(--ink); box-shadow: var(--shadow); }
+.heading { display: flex; align-items: flex-start; justify-content: space-between; gap: .75rem; margin-bottom: .75rem; }
+.heading > div { display: grid; gap: .5rem; min-width: 0; }
+.heading h2 { font-size: 1.3rem; }
+.monthNav { display: grid; grid-template-columns: 44px minmax(0,1fr) 44px; align-items: center; gap: .35rem; text-align: center; }
+.calendar { width: 100%; border-collapse: separate; border-spacing: 2px; table-layout: fixed; }
+.calendar th { color: var(--ink-soft); font-size: .75rem; font-weight: 700; padding: .25rem 0; }
+.calendar td { padding: 0; }
+.day { width: 100%; min-height: 44px; padding: .25rem; border-radius: 10px; border: 1px solid transparent; background: transparent; color: var(--ink); font: inherit; font-size: .9rem; font-variant-numeric: tabular-nums; cursor: pointer; }
+.day:hover { background: color-mix(in srgb,var(--chlorophyll) 10%,white); }
+.day[data-outside="true"] { color: var(--ink-faint); }
+.day[aria-current="date"] { border-color: var(--chlorophyll); }
+.day[data-selected="true"] { background: var(--chlorophyll); color: white; font-weight: 800; }
+.day:focus-visible { outline: 3px solid var(--cobalt); outline-offset: -2px; }
+.actions { display: flex; justify-content: space-between; align-items: center; gap: .75rem; flex-wrap: wrap; padding-top: .5rem; }

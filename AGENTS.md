@@ -4,7 +4,7 @@
 
 Senku is a biology-first, experiment-driven learning platform backed by a reproducible scientific core. Learners predict, manipulate, observe, explain and reflect. Learn, Lab, Challenges, Discover and Classroom share versioned experiments, models, solver results and provenance. BioForge is integrated scientific infrastructure, not a separate product.
 
-Read docs/README.md, docs/launch-brief.md, docs/status.md and docs/decisions.md first. Read task-specific topics rather than the entire archive every turn. Current state: backend services, migrations and seven scientific adapters are implemented locally; read docs/backend.md and docs/backend-coverage.md for behavior, tests and external deployment limits. Frontend work is separate. Keep planned, proposed, implemented, tested and scientifically validated distinct.
+Read docs/README.md, docs/launch-brief.md, docs/status.md and docs/decisions.md first. Read task-specific topics rather than the entire archive every turn. Current state: backend services, migrations and eight scientific adapters are implemented locally; read docs/backend.md and docs/backend-coverage.md for behavior, tests and external deployment limits. The frontend and backend are integrated locally. Keep planned, proposed, implemented, tested and scientifically validated distinct.
 
 ## Authority
 
@@ -12,6 +12,7 @@ Explicit current user requirements govern conflicting design suggestions. The ar
 
 ## Non-negotiables
 
+- Product-facing copy speaks as Senku. Never name underlying providers, models, frameworks, libraries, APIs or engines in interface labels, generated learner prose, marketing, metadata or social artwork. Avoid AI-powered/AI-guided branding. Internal contracts and accurate scientific citations retain their identifiers.
 - No Lucide icons/dependencies, UI gradients, or em dashes in user-facing copy. Use original visual assets, premium Apple-inspired glass, expressive readable type and tactile playful interaction. Follow docs/frontend/DESIGN.md and FRONTEND_CONTRACT.md before UI changes.
 - Every scientific control changes a real model parameter. Every numerical plot traces to a run. Never fabricate citations, results, logs, progress or validation claims.
 - Keep experiment/model versions and inputs continuous between Learn and Lab. Distinguish illustrative education, predictions, literature values and measured data; preserve units, assumptions, limitations and diagnostics.

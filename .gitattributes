@@ -16,3 +16,5 @@ Dockerfile text eol=lf
 *.Dockerfile text eol=lf
 # Keep the original supplied masterplan byte-for-byte.
 docs/source/Senku_Detailed_Plan.md -text
+# Preserve deposited fixed-column structural coordinates and their pinned hashes.
+services/workers/docking/data/*.pdb -text whitespace=-blank-at-eol

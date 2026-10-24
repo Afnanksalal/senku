@@ -1,1 +1,7 @@
 .layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:1.25rem;align-items:start}.layout>*{min-width:0}.graph{height:360px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--paper)}.species,.reaction{display:grid;grid-template-columns:1fr minmax(100px,180px) auto;gap:1rem;align-items:center;padding:.75rem 0;border-bottom:1px solid var(--line)}.add{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem}.species>*,.reaction>*,.add>*{min-width:0}@media(max-width:1000px){.layout{grid-template-columns:1fr}.layout>aside{grid-row:1}.species,.reaction{grid-template-columns:1fr 1fr}.species>button,.reaction>button{grid-column:1/-1;justify-self:start}}@media(max-width:480px){.add{grid-template-columns:1fr}.graph{height:300px}}
+.species,.reaction{grid-template-columns:minmax(0,1fr) minmax(100px,180px) auto}.species :global(.field)>*,.reaction :global(.field)>*{min-width:0;overflow-wrap:anywhere}@media(max-width:1000px){.species,.reaction{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}@media(max-width:480px){.species,.reaction{grid-template-columns:minmax(0,1fr)}.species>button,.reaction>button{grid-column:1}}
+
+/* Separate network edits from destructive actions and the next editable row. */
+.species,.reaction{padding-block:1.25rem;row-gap:1.25rem}
+.species :global(.field),.reaction :global(.field),.add :global(.field){gap:.5rem}
+.add{gap:1.25rem}

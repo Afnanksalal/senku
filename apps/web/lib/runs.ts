@@ -10,6 +10,7 @@ export type Series = { columns: string[]; units: string[]; data: number[][] };
 export type Frame = { time_min: number; concentration?: number[][]; unit?: string; cells?: { id: number; position_um: number[]; volume_um3: number }[] };
 export type RunResult = {
   scalars: Record<string, number>; units?: Record<string, string>; series?: Series[]; frames?: Frame[];
+  docking?: unknown;
   molecule?: { canonical_smiles: string; formula: string; molblock?: string };
   diagnostics?: Record<string, unknown>; warnings?: string[]; engine_version?: string;
 };
@@ -32,7 +33,7 @@ async function deviceRuns(experimentId?: string): Promise<RunRecord[]> {
 }
 
 /** Same validator and kernel the server ships in @senku/experiment-schema, so device runs never use a lesson-only model. */
-async function runOnDevice(manifest: CatalogExperiment, input: Parameters, seed: number): Promise<RunRecord> {
+export async function runOnDevice(manifest: CatalogExperiment, input: Parameters, seed: number): Promise<RunRecord> {
   const base = {
     id: crypto.randomUUID(), origin: 'device' as const, experiment_id: manifest.id, experiment_version: manifest.version,
     model_id: manifest.model.id, model_version: manifest.model.version, engine_id: 'device-kernel', manifest_hash: manifest.content_hash,

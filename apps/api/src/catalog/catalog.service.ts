@@ -46,6 +46,7 @@ export class CatalogService {
             digest(manifest),
           ],
         );
+        if (!manifest.modes.includes('learn')) continue;
         const lesson = {
           id: `${manifest.id}-mission`,
           name: manifest.name,

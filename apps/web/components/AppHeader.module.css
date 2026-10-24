@@ -1,0 +1,32 @@
+.header{position:sticky;top:max(.75rem,env(safe-area-inset-top));z-index:30;display:flex;align-items:center;gap:1.5rem;width:min(1440px,100% - var(--page-gutter)*2);min-height:72px;margin:.75rem auto 0;padding:.6rem .8rem .6rem 1.2rem;border-radius:23px}
+.brand{flex:none;text-decoration:none}.desktop{display:flex;align-items:center;gap:.25rem;margin-inline:auto}.desktop a{display:flex;align-items:center;min-height:44px;padding:.65rem .9rem;text-decoration:none;font-weight:800;border-radius:14px;color:var(--ink-soft)}.desktop a:hover,.desktop a[aria-current]{background:color-mix(in srgb,var(--chlorophyll) 10%,transparent);color:var(--chlorophyll-deep)}
+.actions{display:flex;align-items:center;gap:.6rem;margin-left:auto;flex:none}.xp{display:flex;align-items:center;gap:.35rem;color:var(--hema);font-weight:900;text-decoration:none;min-height:44px}.avatar{width:44px;height:44px;border:2px solid white;display:grid;place-items:center;background:var(--hema);color:white;border-radius:16px;font-weight:900;text-decoration:none;box-shadow:0 3px 0 var(--hema-deep)}.bottom{display:none}
+.overlay{position:fixed;inset:0;background:rgba(23,38,46,.3);backdrop-filter:blur(5px);z-index:60}.sheet{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,calc(100% - 2rem));max-height:calc(100dvh - 3rem);overflow:auto;padding:1.5rem;display:grid;gap:1.5rem;background:var(--paper);border:1px solid white;border-radius:28px;box-shadow:0 24px 80px rgba(23,38,46,.2);z-index:61}.sheet h2{font-size:1.65rem}.toolGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.toolCard{display:flex;align-items:center;gap:.8rem;padding:1rem .8rem;border:1px solid var(--line);border-radius:18px;text-decoration:none;background:white;min-width:0}.toolCard>span:nth-child(2){flex:1;min-width:0}.toolCard strong{display:block;font-size:1rem}.toolCard small{display:block;color:var(--ink-soft);line-height:1.35;margin-top:.15rem}.toolCard:hover,.toolCard[aria-current]{border-color:var(--chlorophyll);background:color-mix(in srgb,var(--chlorophyll) 5%,white)}.toolIcon{width:43px;height:43px;border-radius:14px;display:grid;place-items:center;flex:none;background:var(--slide);color:var(--chlorophyll-deep)}.footer{display:flex;align-items:center;justify-content:space-between;gap:1rem;border-top:1px solid var(--line);padding-top:1rem}.footer>a{padding-block:.7rem;font-weight:800}
+@media(max-width:1000px){.desktop{display:none}.header{gap:.75rem;min-height:64px;padding:.5rem .6rem .5rem .9rem}.bottom{position:fixed;z-index:32;bottom:0;left:0;right:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));padding:.5rem max(.4rem,env(safe-area-inset-right)) max(.45rem,env(safe-area-inset-bottom));background:var(--glass-strong);border-top:1px solid white;backdrop-filter:blur(20px);box-shadow:0 -8px 30px rgba(23,38,46,.06)}.bottom a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;min-height:56px;text-decoration:none;color:var(--ink-soft);font-weight:800;font-size:.7rem;border-radius:16px}.bottom a[aria-current]{background:color-mix(in srgb,var(--chlorophyll) 12%,transparent);color:var(--chlorophyll-deep)}}
+@media(max-width:600px){.header{width:calc(100% - 1.5rem)}.brand{font-size:1.25rem!important;gap:.4rem!important}.brand svg{width:28px;height:28px}.actions{gap:.4rem}.tools{padding-inline:.6rem!important;gap:.35rem!important}.xpLabel{display:none}.avatar{width:40px;height:40px;border-radius:14px}.start{display:none!important}.sheet{top:auto;bottom:0;left:0;transform:none;width:100%;max-height:88dvh;border-radius:26px 26px 0 0;padding:1.25rem 1rem max(1rem,env(safe-area-inset-bottom))}.toolGrid{grid-template-columns:1fr;gap:.5rem}.toolCard{padding:.75rem}.sheet h2{font-size:1.4rem}}
+/* Reflow also follows enlarged text rather than only device width. */
+.header{flex-wrap:wrap}.bottom a{min-width:0}.bottom a span{max-width:100%;overflow-wrap:anywhere}
+
+/* Keep every action reachable when text is enlarged or the viewport is short. */
+.actions{min-width:0;max-width:100%;flex-wrap:wrap}
+.actions>button,.actions>a{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.sheet{scroll-padding-block:1rem;overscroll-behavior:contain}
+.sheetHeading{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:.75rem;position:relative;background:var(--paper);padding-block:.35rem}
+.sheetHeading>div{min-width:0;overflow-wrap:anywhere}
+.sheetHeading>button{flex:none;align-self:start}
+.toolCard strong,.toolCard small{overflow-wrap:anywhere}
+.footer{flex-wrap:wrap}.footer>*{min-width:0;max-width:100%;overflow-wrap:anywhere}
+@media(max-width:1000px){.header{position:relative;top:auto}.bottom a{line-height:1.2;padding:.25rem .1rem}.bottom{padding-left:max(.4rem,env(safe-area-inset-left))}}
+@media(max-width:600px){.header{column-gap:.5rem;row-gap:.6rem}.actions{flex:1 1 auto;justify-content:flex-end}.sheetHeading>button{width:44px;height:44px;min-width:44px;padding:.5rem}.sheetHeading>button svg{width:24px;height:24px}}
+@media(max-height:450px){.sheet{top:.5rem;bottom:.5rem;transform:translateX(-50%);max-height:calc(100dvh - 1rem);padding-top:.75rem;padding-bottom:.75rem}.sheetHeading>button{width:44px;height:44px;min-width:44px;padding:.5rem}.sheetHeading>button svg{width:24px;height:24px}}
+@media(max-height:450px) and (max-width:600px){.sheet{transform:none}}
+
+/* Equal side tracks keep navigation at the true center, independent of account width. */
+@media(min-width:1001px){
+ .header{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);column-gap:1.25rem}
+ .brand{justify-self:start}
+ .desktop{margin:0;justify-self:center}
+ .actions{margin:0;justify-self:end;justify-content:flex-end}
+}
+@media(min-width:1001px){.header{padding-inline:1rem}}
+@media(min-width:1001px){.desktop{width:max-content;max-width:min(40vw,34rem);min-width:0;flex-wrap:wrap;justify-content:center}}

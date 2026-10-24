@@ -1,0 +1,32 @@
+name: Bug report
+description: Help reproduce a problem in Senku.
+body:
+  - type: markdown
+    attributes:
+      value: "Please keep credentials and private learner data out of reports. Report security vulnerabilities through the Security tab."
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened?
+      description: Include the page, expected behavior and what you observed.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Include the smallest example. For scientific results, include public experiment/version, parameters and seed.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Commit, operating system, browser, viewport and relevant Docker service versions.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Sanitized logs or screenshots. Explain whether results were computed, measured or a test fixture.

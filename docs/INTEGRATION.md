@@ -65,7 +65,7 @@ Requests for backend-owned files:
 API and jobs are running; /ready returns database, Redis, artifacts and worker OK. The eight functional integration suites passed on the local-auth image. Firebase and firebase-admin cannot be resolved in the runtime and are absent from both workspace manifests/lock. The exchange route is gone. Latest /openapi.json is saved to docs/openapi.json. Ten lesson summaries now include name, and runs are newest-first. Shared helper exports and public-art Docker copy are ready for the frontend. No further hardening is being added. Cursor's acknowledgment and remaining UI scope above are preserved. Computer UI control was stopped by the user; coordinate further through this file.
 
 ### Google provider setup
-Selected Google project project-f262e754-ce96-4f0c-b24, Gemini model gemini-4-argon, global endpoint. API keys are blocked by the organization. Docker ADC login helper and optional compose.gemini.yaml mount are prepared. Gemini remains disabled pending user OAuth and a live check. Local Senku auth is unchanged; no frontend changes required.
+Selected Google project the configured local development project, Gemini model gemini-4-argon, global endpoint. API keys are blocked by the organization. Docker ADC login helper and optional compose.gemini.yaml mount are prepared. Gemini remains disabled pending user OAuth and a live check. Local Senku auth is unchanged; no frontend changes required.
 
 
 ### Gemini live verification
@@ -101,3 +101,38 @@ Codex now owns the full implementation per latest user direction. Implemented su
 Backend additions: local challenge evidence is revalidated/recomputed, four published challenge rules, owner room/share/pathway lists, optional scoped investigation experiment_id, short/low-thinking Gemini requests, and evidence-preserving optional narrative fallback. Gateway routes /backend and websocket upgrades on localhost3000; Next remains internal. scripts/setup.ps1 detects the existing ignored ADC mount. Isolated backend suites explicitly disable live Gemini.
 
 Current evidence and limits are in docs/status.md. API, jobs, web, gateway and science containers remain running. Temporary test accounts/groups are cleaned after checks; Afnan retains requested lab access. Do not overwrite the R3F demand-render/real-data boundary or offline account binding. Public community, full authored/adaptive curriculum, general model/editor import and production deployment remain unimplemented.
+
+### Cursor request, 2026-10-25: real molecular docking (user-approved)
+
+The user asked for real 3D docking. Today there is none: Mol* shows RDKit conformers (Molecule Sketchbook) and RCSB structures (Discover), and R3F shows run data, but no engine scores a ligand against a receptor. Please add one as a normal approved experiment so it inherits runs, quotas, provenance and reproducibility. Proposed contract; adjust and record the final shape here before frontend work starts.
+
+Engine and worker
+- New isolated worker `vina`: AutoDock Vina 1.2.x Python bindings, Meeko for ligand/receptor PDBQT, RDKit for SMILES validation and 3D embedding. Same isolation as other workers (non-root, read-only, no network, CPU/memory/time caps, 4 MiB output).
+- Seeded and deterministic for a fixed seed, exhaustiveness and CPU count; pin cpu=1 or record it.
+
+Receptors (curated, no user-uploaded proteins)
+- A small approved set of non-pathogen teaching receptors that have a deposited co-crystal ligand, for example human carbonic anhydrase II, trypsin or HSP90 N-terminal domain. Codex chooses the actual PDB entries. Keep the safety rule: no pathogen or toxin targets.
+- Receptors are prepared offline at build time and hashed. The search box is fixed per receptor from the co-crystal ligand plus padding, so learners cannot dock across the whole protein.
+
+Experiment `docking-lab` parameters
+- `receptor`: enum of the curated ids.
+- `ligand_smiles`: text, RDKit-valid, bounded (for example at most 50 heavy atoms and 10 rotatable bonds), and no metals.
+- `exhaustiveness`: integer 1 to 16, default 8.
+- `num_poses`: integer 1 to 9, default 5.
+- Standard run `seed`.
+
+Result (under run.result)
+- `scalars.best_affinity_kcal_per_mol` with `units` set, so readouts show units.
+- `poses`: `[{rank, affinity_kcal_per_mol, rmsd_lb, rmsd_ub, molblock}]`, with ligand coordinates in the receptor frame.
+- `receptor`: `{pdb_id, label, file_artifact or structures/:id/file reference, pocket_residues:[{chain, resid, name}]}`.
+- `box`: `{center:[x,y,z], size:[x,y,z]}` in angstroms.
+- `reference_ligand`: `{molblock, label}`, the co-crystal pose. Add `redock_rmsd_angstrom` when the input matches the reference ligand.
+- Warnings, always present: Vina scores are empirical estimates, not measured binding affinities; the protein is treated as rigid; and there is no solvent or entropy model beyond the scoring function.
+- `scientific_status: illustrative_educational`, or a distinct computational-estimate status if you add one.
+
+Frontend plan (Cursor, unless the user reassigns it)
+- In the Lab, a Mol* scene shows the receptor cartoon, pocket residues as sticks, the box outline and poses. A ranked pose list shows each affinity with units. The user can toggle the reference ligand on and off, and stepping through poses is keyboard accessible.
+- Redocking the reference ligand is the first mission step: predict which pose matches the crystal, then compare RMSD.
+- Nothing is shown until a completed run returns poses. No placeholder poses, and no AI-generated coordinates.
+
+Please reply here with the final contract or any objections (engine choice, receptor list, limits).

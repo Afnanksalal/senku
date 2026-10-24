@@ -336,3 +336,29 @@ details.more[open] > summary::before { content: "\2212"; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
 }
+
+/* The compact header and mobile navigation keep every tool reachable. */
+:root { --header-offset: 7rem; }
+@media(max-width:1000px){
+  main#main { padding-bottom:calc(84px + env(safe-area-inset-bottom)); }
+  body:has(header[data-marketing="true"]) main#main { padding-bottom:0; }
+  html { scroll-padding-bottom:calc(100px + env(safe-area-inset-bottom)); }
+  button,a,input,textarea,summary,[tabindex] { scroll-margin-bottom:calc(100px + env(safe-area-inset-bottom)); }
+  .dialog { max-height:calc(100dvh - 2rem); }
+}
+.catalog-filters{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;margin-bottom:.5rem}.catalog-search{position:relative;display:flex;align-items:center;flex:1;min-width:min(100%,280px);max-width:480px}.catalog-search>svg{position:absolute;left:.9rem;color:var(--ink-soft)}.catalog-search .input{padding-left:2.8rem;min-height:50px;border-radius:16px}.catalog-segments{display:flex;gap:.35rem;flex-wrap:wrap}.catalog-segments [aria-pressed="true"]{background:var(--chlorophyll);color:white;border-color:var(--chlorophyll-deep)}
+@media(max-width:600px){.catalog-search{max-width:none}.catalog-segments{width:100%;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.catalog-segments .btn{font-size:.78rem;padding-inline:.4rem;line-height:1.25;white-space:normal}.hero{padding-block:.75rem}.hero-copy>p{max-width:42rem}}
+
+/* Generated questions get the full phone width instead of a narrow mascot column. */
+@media(max-width:640px){
+ .mission-page .companion{display:grid;grid-template-columns:minmax(0,1fr);gap:.75rem}
+ .mission-page .companion .mascot{width:64px;height:64px;object-fit:contain;margin:0}
+ .mission-page .companion h2{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.25}
+ .mission-page .prediction-note{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+}
+
+/* Shared form rhythm: labels stay close to their controls, fields get breathing room. */
+:root{--field-label-gap:.5rem;--form-field-gap:1.25rem}
+.field{gap:var(--field-label-gap);min-width:0}
+form.stack{row-gap:var(--form-field-gap)}
+.param{scroll-margin-block:var(--header-offset) 6rem}

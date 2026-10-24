@@ -1,0 +1,63 @@
+.map { display: grid; gap: 1.5rem; }
+.map *, .map *::before, .map *::after { min-width: 0; }
+.intro { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; align-items: center; padding-block: clamp(.75rem, 2vw, 2rem) .25rem; }
+.intro > div { display: grid; gap: 1rem; max-width: 48rem; }
+.intro h1 { font-size: clamp(2.5rem, 5.8vw, 5.2rem); letter-spacing: -.045em; line-height: 1.03; }
+.intro p { font-size: clamp(1rem, 1.8vw, 1.18rem); line-height: 1.7; color: var(--ink-soft); max-width: 40rem; }
+.invitation { font-family: var(--font-hand), cursive; color: var(--hema); font-size: clamp(1.6rem, 2.8vw, 2rem); }
+.guide { width: 125px; justify-self: end; margin-top: -1rem; }
+.progressStrip { display: grid; gap: 1rem; padding: 1.3rem 1.5rem; background: var(--paper); border: 1px solid var(--glass-edge); border-radius: 20px; }
+.progressStrip dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .75rem; margin: 0; }
+.progressStrip dl > div:not(:last-child) { border-right: 1px solid var(--line); padding-right: .75rem; }
+.progressStrip dt { color: var(--ink-soft); font-size: .8rem; font-weight: 800; }
+.progressStrip dd { display: flex; align-items: baseline; gap: .35rem; flex-wrap: wrap; font-family: var(--font-display); font-size: clamp(1.45rem, 3.3vw, 2.2rem); line-height: 1.2; font-weight: 750; margin: .25rem 0 0; }
+.progressStrip dd span { font-family: var(--font-body); font-size: .85rem; font-weight: 700; color: var(--ink-soft); }
+.achievements { display: flex; flex-wrap: wrap; gap: .5rem .85rem; padding-top: .8rem; border-top: 1px solid var(--line); }
+.achievements > span { display: inline-flex; align-items: center; gap: .35rem; font-size: .84rem; font-weight: 800; color: var(--chlorophyll-deep); }
+.guestNote { display: flex; gap: .7rem; color: var(--ink-soft); font-size: .9rem; line-height: 1.6; max-width: 63rem; }
+.guestNote > svg { margin-top: .15rem; }
+.nextMission { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: 1rem; align-items: center; padding: 1.25rem; background: color-mix(in srgb, var(--c) 7%, var(--paper)); border: 1px solid color-mix(in srgb, var(--c) 22%, var(--glass-edge)); border-radius: 24px; }
+.nextArtwork { display: grid; place-items: center; }
+.nextArtwork img { display: block; width: 100%; height: auto; mix-blend-mode: multiply; }
+.nextCopy { display: grid; gap: .4rem; }
+.nextCopy > p { font-size: .82rem; font-weight: 800; color: var(--c-deep); }
+.nextCopy h2 { font-size: clamp(1.5rem, 2.8vw, 2.2rem); line-height: 1.1; }
+.nextCopy > span { color: var(--ink-soft); font-size: .93rem; line-height: 1.6; }
+.primary { --tone: var(--chlorophyll-deep); --tone-deep: var(--ink); grid-column: 1 / -1; justify-self: stretch; }
+.mapHeading { display: grid; gap: .6rem; padding-top: 1.4rem; }
+.mapHeading h2 { font-size: clamp(1.65rem, 3.3vw, 2.7rem); }
+.mapHeading p { font-size: .95rem; line-height: 1.65; color: var(--ink-soft); }
+.lanes { display: grid; gap: 1.5rem; }
+.lane { border: 1px solid var(--glass-edge); border-radius: 24px; background: var(--glass); box-shadow: var(--shadow); overflow: hidden; }
+.laneHeading { display: flex; justify-content: space-between; align-items: start; gap: 1rem; flex-wrap: wrap; padding: clamp(1.2rem, 2.5vw, 2rem); background: var(--paper); border-bottom: 1px solid var(--line); }
+.laneHeading > div { display: grid; gap: .55rem; }
+.laneHeading h2 { font-size: clamp(1.35rem, 2.1vw, 1.8rem); line-height: 1.2; }
+.laneHeading p { color: var(--ink-soft); font-size: .92rem; line-height: 1.6; max-width: 55rem; }
+.laneHeading > span { color: var(--ink-soft); font-size: .82rem; font-weight: 800; flex: none; padding-top: .2rem; }
+.missionList { list-style: none; padding: 0 clamp(1rem, 2.5vw, 2rem); margin: 0; }
+.mission { position: relative; display: grid; grid-template-columns: 28px 52px minmax(0, 1fr); gap: .8rem; align-items: center; padding-block: 1.3rem; }
+.mission:not(:last-child) { border-bottom: 1px solid var(--line); }
+.position { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--paper); border: 1px solid var(--line); font-size: .8rem; font-weight: 800; color: var(--ink-soft); }
+.mission[data-completed=true] .position { background: var(--chlorophyll-deep); border-color: var(--chlorophyll-deep); color: var(--paper); }
+.mission[data-current=true] .position { border: 2px solid var(--c); color: var(--c-deep); }
+.missionArtwork { display: grid; place-items: center; border-radius: 17px; aspect-ratio: 1; background: color-mix(in srgb, var(--c) 7%, var(--paper)); overflow: hidden; }
+.missionArtwork img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; }
+.missionCopy { display: grid; gap: .4rem; }
+.missionLabel { display: flex; align-items: center; gap: .5rem .7rem; flex-wrap: wrap; color: var(--ink-soft); font-size: .75rem; font-weight: 800; }
+.completed { display: inline-flex; align-items: center; gap: .25rem; color: var(--chlorophyll-deep); }
+.suggestion { color: var(--c-deep); }
+.missionCopy h3 { font-size: clamp(1.12rem, 1.7vw, 1.4rem); line-height: 1.25; }
+.missionCopy > p { font-size: .9rem; line-height: 1.6; color: var(--ink-soft); }
+.mastery { font-size: .78rem; color: var(--ink-soft); line-height: 1.5; }
+.missionActions { grid-column: 2 / -1; display: flex; align-items: center; gap: .75rem 1.4rem; flex-wrap: wrap; }
+.missionAction { display: inline-flex; align-items: center; gap: .4rem; min-height: 44px; font-size: .9rem; font-weight: 800; color: var(--c-deep); text-decoration: none; }
+.missionAction:hover { text-decoration: underline; text-underline-offset: .25em; }
+.labLink { display: inline-flex; align-items: center; min-height: 44px; font-size: .83rem; color: var(--ink-soft); text-underline-offset: .3em; }
+.nextAdventure { display: grid; gap: 1.5rem; margin-top: 1rem; padding: clamp(1.4rem, 3vw, 2.4rem); border-radius: 24px; border: 1px solid var(--line); background: var(--paper); }
+.nextAdventure > div:first-child { display: grid; gap: .7rem; }
+.nextAdventure h2 { font-size: clamp(1.5rem, 2.8vw, 2.3rem); }
+.nextAdventure p { color: var(--ink-soft); line-height: 1.65; }
+.loading { display: grid; gap: 1rem; }
+@media (min-width: 640px) { .intro { grid-template-columns: minmax(0, 1fr) 160px; } .guide { width: 160px; margin-top: 0; } .nextMission { grid-template-columns: 110px minmax(0, 1fr) auto; padding: 1.5rem; } .primary { grid-column: auto; justify-self: end; } .mission { grid-template-columns: 34px 80px minmax(0, 1fr) auto; gap: 1rem; padding-block: 1.5rem; } .position { width: 34px; height: 34px; } .missionActions { grid-column: auto; display: grid; gap: .1rem; justify-items: end; padding-left: .5rem; } .missionArtwork { border-radius: 21px; } }
+@media (min-width: 1050px) { .intro { grid-template-columns: minmax(0, 1fr) 220px; } .guide { width: 190px; } .progressStrip { grid-template-columns: minmax(0, 1fr) minmax(220px, auto); align-items: center; gap: 2rem; } .progressStrip dl { gap: 1.5rem; } .achievements { border-top: 0; border-left: 1px solid var(--line); padding: 0 0 0 2rem; max-width: 25rem; } .nextAdventure { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 2rem; } }
+@media (max-width: 420px) { .intro { position: relative; padding-right: 0; } .guide { display: none; } .intro h1 { font-size: clamp(2.1rem, 10.6vw, 2.8rem); } .mission { grid-template-columns: 28px minmax(0, 1fr); } .missionArtwork { display: none; } .missionActions { grid-column: 2; } .nextMission { grid-template-columns: 60px minmax(0, 1fr); } .progressStrip { padding: 1rem; } .progressStrip dt { font-size: .72rem; } .progressStrip dd { font-size: 1.35rem; } .nextAdventure :global(.row) { align-items: stretch; } .nextAdventure :global(.btn) { width: 100%; } }

@@ -262,9 +262,14 @@ export class JobRuntime {
         parameters: run.parameters,
         seed: run.seed,
         input: run.input,
-        timeout_seconds: Math.min(60, this.config.SCIENCE_TIMEOUT_MS / 1000),
+        timeout_seconds: run.engine_id === 'vina' ? 60 : Math.min(60, this.config.SCIENCE_TIMEOUT_MS / 1000),
       });
       if (output.engine_id !== run.engine_id || output.model_id !== run.experiment_id)
+        throw new Error('invalid_output');
+      if (run.engine_id === 'vina' && (!output.docking ||
+          output.docking.target.id !== run.parameters.target ||
+          output.docking.provenance.seed !== run.seed ||
+          output.docking.poses.length > Number(run.parameters.num_modes)))
         throw new Error('invalid_output');
       for (const series of output.series)
         if (

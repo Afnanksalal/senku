@@ -6,9 +6,11 @@ import { ApiRequest, Public, Roles, SchemaBody, actor } from '../common/http';
 import { digest } from '../common/crypto';
 import { ConflictException } from '@nestjs/common';
 import { Experiment, localScalars, validateParameters } from '@senku/experiment-schema';
+import { DynamicChallengeService } from './dynamic-challenge.service';
 const input = z.object({
   event_id: z.string().uuid(),
   run_id: z.string().uuid().optional(),
+  scenario_id: z.string().uuid().optional(),
   local: z.object({
     parameters: z.record(z.string(), z.union([z.number().finite(), z.string().max(256)])),
     seed: z.number().int().min(0).max(2147483647),
@@ -18,7 +20,7 @@ const input = z.object({
 @ApiBearerAuth()
 @Controller('v1/challenges')
 export class ChallengeController {
-  constructor(private readonly db: Database) {}
+  constructor(private readonly db: Database, private readonly dynamic: DynamicChallengeService) {}
   @Public() @Get() list() {
     return this.db.query('SELECT id,lesson_id,definition FROM challenges ORDER BY id');
   }
@@ -55,7 +57,12 @@ export class ChallengeController {
       )[0];
       if (!challenge) throw new NotFoundException('Challenge not found');
       let scalars: Record<string, number>;
-      if (b.local) {
+      const scenario = b.scenario_id ? await this.dynamic.scenario(actor(r), b.scenario_id) : null;
+      if (scenario && scenario.challenge_id !== id) throw new BadRequestException('Challenge does not match this scenario');
+      if (scenario) {
+        const proof = await this.dynamic.proof(actor(r), scenario.specification, { run_id: b.run_id, local: b.local });
+        scalars = proof.scalars;
+      } else if (b.local) {
         const experiment = (await rows<{ manifest: Experiment }>(tx,
           'SELECT manifest FROM experiment_definitions WHERE id=$1 AND version=$2 AND published=true',
           [challenge.definition.experiment_id, challenge.definition.experiment_version],
@@ -80,8 +87,8 @@ export class ChallengeController {
         throw new NotFoundException('Completed challenge run with retained results not found');
       scalars = run.result.scalars;
       }
-      const metric = scalars[challenge.definition.metric];
-      const passed = Number.isFinite(metric) && metric >= challenge.definition.minimum;
+      const metric = scalars[scenario?.specification.goal.metric ?? challenge.definition.metric];
+      const passed = Number.isFinite(metric) && metric >= (scenario?.specification.goal.value ?? challenge.definition.minimum);
       let xp = 0;
       if (passed) {
         const reward = await rows(
@@ -91,7 +98,7 @@ export class ChallengeController {
         );
         if (reward.length) xp = challenge.definition.xp;
       }
-      const result = { passed, metric, xp_awarded: xp, request_hash: hash };
+      const result = { passed, metric, xp_awarded: xp, request_hash: hash, ...(b.scenario_id ? { scenario_id:b.scenario_id } : {}) };
       await tx.query(
         'INSERT INTO challenge_attempts(owner_id,challenge_id,event_id,result) VALUES($1,$2,$3,$4)',
         [actor(r).id, id, b.event_id, JSON.stringify(result)],

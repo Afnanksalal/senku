@@ -24,7 +24,7 @@ export const runRequest = z
       .default({}),
     seed: z.number().int().min(0).max(2147483647).default(0),
     engine: z
-      .enum(['numerics', 'roadrunner', 'tellurium', 'copasi', 'cobrapy', 'physicell', 'rdkit'])
+      .enum(['numerics', 'roadrunner', 'tellurium', 'copasi', 'cobrapy', 'physicell', 'rdkit', 'vina'])
       .optional(),
     pathway_id: z.string().uuid().optional(),
     room_id: z.string().uuid().optional(),
@@ -95,6 +95,12 @@ export class RunService {
       !(capability.models as string[]).includes(manifest.id)
     )
       throw new BadRequestException('Engine does not support this approved experiment');
+    if (manifest.id === 'molecular-docking') {
+      const seed = parameters.seed as number;
+      if (request.seed !== 0 && request.seed !== seed)
+        throw new BadRequestException('The run seed must match the docking seed');
+      request = { ...request, seed };
+    }
     const input: Record<string, unknown> = {};
     if (manifest.id === 'pathway-playground') {
       if (!request.pathway_id)

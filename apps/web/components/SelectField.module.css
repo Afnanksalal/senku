@@ -1,0 +1,18 @@
+.trigger { display: flex; align-items: center; justify-content: space-between; gap: .75rem; width: 100%; min-width: 0; min-height: 44px; padding: .65rem .8rem; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.9); color: var(--ink); font: inherit; text-align: left; cursor: pointer; box-shadow: 0 2px 0 rgba(23,38,46,.04); }
+.trigger > span:first-child { min-width: 0; white-space: normal; overflow-wrap: anywhere; font: inherit; line-height: 1.4; }
+.trigger:hover:not(:disabled) { border-color: color-mix(in srgb,var(--chlorophyll) 45%,var(--line)); }
+.trigger[data-state="open"],.trigger:focus-visible { outline: 3px solid color-mix(in srgb,var(--cobalt) 50%,transparent); outline-offset: 2px; border-color: var(--cobalt); }
+.trigger:disabled { opacity: .55; cursor: not-allowed; }
+.trigger[data-placeholder] { color: var(--ink-soft); }
+.chevron { display: inline-flex; flex: none; color: var(--ink-soft); transition: transform .16s ease; transform: rotate(90deg); }
+.trigger[data-state="open"] .chevron { transform: rotate(-90deg); }
+.content { z-index: 120; width: var(--radix-select-trigger-width); max-width: calc(100vw - 24px); max-height: min(360px,var(--radix-select-content-available-height)); padding: .25rem; overflow: hidden; border: 1px solid var(--glass-edge); border-radius: 16px; background: var(--paper); color: var(--ink); box-shadow: 0 12px 40px -12px rgba(23,38,46,.35),0 0 0 1px var(--line); transform-origin: var(--radix-select-content-transform-origin); }
+.viewport { padding: .2rem; }
+.option { position: relative; display: flex; align-items: center; min-height: 44px; padding: .65rem 2.2rem .65rem .75rem; margin-block: .1rem; border-radius: 10px; outline: none; cursor: pointer; font: inherit; font-size: .95rem; line-height: 1.4; overflow-wrap: anywhere; user-select: none; }
+.option > span:first-child { min-width: 0; }
+.option[data-highlighted] { background: color-mix(in srgb,var(--chlorophyll) 12%,white); color: var(--ink); box-shadow: inset 0 0 0 1px color-mix(in srgb,var(--chlorophyll) 35%,transparent); }
+.option[data-state="checked"] { font-weight: 750; }
+.option[data-disabled] { opacity: .45; cursor: not-allowed; }
+.indicator { position: absolute; right: .6rem; display: inline-flex; color: var(--chlorophyll); }
+.scrollButton { display: flex; align-items: center; justify-content: center; min-height: 44px; background: var(--paper); color: var(--ink-soft); }
+@media(prefers-reduced-motion:reduce) { .chevron { transition: none; } }

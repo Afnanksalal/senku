@@ -34,3 +34,23 @@ Touch and keyboard equivalents, visible focus, scalable typography, non-color st
 ## Confirmed launch interaction choices
 
 English initially; concept-first. Offer guided missions and free labs immediately, with learner-selected first experiments. Allow guest exploration and account-based cloud saves. Keep the companion quiet unless summoned. Include real-time shared labs, private work and share links at learner launch. Teacher Studio and public community follow later. See ../launch-brief.md.
+
+## Preserve-identity UX pass, 2026-10-25
+
+Current user override: improve usability without replacing Senku's palette, mascot, artwork or tools. The existing experiment catalog stays at `/`; `/welcome` is the public introduction and `/home` is the learner dashboard. The compact application header exposes the entire toolkit, while mobile has a five-destination bottom navigation with document/focus safe-area insets.
+
+Learn uses grouped mission rows and one suggested action, without prerequisite locks. Mobile Lab separates Results, Controls, Model and History while retaining mounted state and a reachable run action; desktop retains the complete layout. Dropdowns use a shared Radix Select and classroom due dates use an optional keyboard-operable calendar/time dialog.
+
+Profile and home use authoritative learning rewards, actual attempt history, UTC day accounting and persisted daily goals. Levels are a transparent presentation of each100earned XP, not a new currency. Existing compute admission remains separate from learning XP. All prior tools remain available.
+
+## Mascot brand mark, 2026-10-25
+User explicitly replaced the abstract cell logo with a flat head-only rendering of the existing mascot. Shared BrandMark and favicon use the green face, yellow goggles, dark eyes, blush and smile, with solid vector fills. Full-body mascot artwork remains unchanged. Source: public/art/senku-mark.svg, mirrored in app/icon.svg.
+
+## Coherent icon language and generated-question reflow
+Original symbols now use chunky rounded silhouettes and a second tint of the current color, consistent with the head-only mascot. No external icon pack, Lucide, gradients or new palette is introduced. At narrow widths/large text, the header reflows in the document, toolkit title/close reserve independent columns and precise labels/units wrap. Phone mission questions use full width under the mascot. Missions prepare Gemini text before showing questions; practice states are explicit, answer keys stay server-side and saved mission IDs preserve reload continuity.
+
+## Product voice
+All learner-facing language and marketing speaks as Senku. Do not advertise providers, model names, libraries, frameworks or implementation details. Say a mission made for you, your adventure, or Senku is preparing your adventure. The same rule applies to generated prose, metadata and social artwork. Internal contracts and accurate scientific citations remain intact.
+
+## Home dashboard proportions, 2026-10-25
+Home now uses a1120px content grid, a compact40–44px desktop heading, a separate personal greeting and a single question-led action. The mascot occupies a deliberate companion column; on phones it becomes a small illustration beside reserved intro space. Secondary mission/experiment links are lower emphasis. The composer has a consistent field/footer rhythm, a single example question and concise helper text. Palette, fonts, mascot, account data and tools are preserved. This is a learner dashboard, with progress and continuation directly after the entry section.

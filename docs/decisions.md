@@ -68,3 +68,16 @@ Use Google ADC for the selected project because its organization disallows API k
 
 ## Expanded learner platform decisions
 The user superseded Cursor ownership and authorized parallel implementation of the remaining platform. Deliver current backend-backed learner/research/collaboration/classroom surfaces before further production hardening. Device challenge rewards are recomputed server-side from approved kernels. AI planning is scoped to an explicitly selected approved experiment to keep constrained generation bounded. Optional narrative failures must not discard completed solver evidence and must be labeled as AI unavailable. A dedicated nginx gateway handles same-origin HTTP and websocket traffic; credentials remain read-only ADC mounts for API/jobs only.
+
+## Preserve-identity UI decisions, 2026-10-25
+The user explicitly requires all tools, current colors, original mascot and artwork to stay. Improve mobile hierarchy and controls within that identity. Preserve `/` as the catalog; add `/welcome` and `/home`. Track earned learning XP rather than invent a spendable points wallet. Daily goals are owner-scoped preferences; activity and streak days explicitly use UTC.
+
+## Natural learning and generated puzzles, 2026-10-25
+The user wants less technical friction and dynamic AI-assisted learning. Shared controls default to plain-language labels and qualitative ranges; exact parameter keys, values and units remain in Precise mode. Results show friendly names/meanings with exact quantities available in details. These are presentation changes, not new solver math.
+
+Four approved game worlds now support owner-bound generated scenarios. The server constructs randomized non-winning starts and reachable targets, with a private kernel-checked witness. Gemini selects among six verified candidates and adapts story, labels and hints to interests, difficulty and saved practice. Only approved controls are editable; fixed conditions and sample seed are enforced during scoring. Gemini never supplies executable UI or scientific results. The first success per base game retains its existing XP reward key, preventing regeneration from farming points.
+
+Generation and post-test explanations use real compute admission and persistent idempotency. Provider interruption/unavailability retains explicitly labeled model-generated fallback content. Explanation evidence comes from retained owner runs or server-recomputed local inputs, never browser-asserted scalars. Scientific limits and exports remain available. Static device practice still works for guests and offline.
+
+## Bounded teaching docking
+User approved an isolated docking experiment with curated nonpathogen/nontoxin proteins, fixed known binding sites, size-limited ligands and reproducible controls. It reuses the existing run/quota/provenance stack. A dedicated Molecular Match surface handles pose/reference comparison; the generic Learn route does not invent a docking lesson. Numeric outputs remain solver-produced; Senku interprets compact saved facts. See docking.md for method, limits and verification boundaries.

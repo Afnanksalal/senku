@@ -20,6 +20,7 @@ export const attemptInput = z
     event_id: z.string().uuid(),
     lesson_id: z.string().min(1).max(100),
     lesson_version: z.literal('1.0.0'),
+    personalization_id: z.string().uuid().optional(),
     prediction: z.enum(['increase', 'decrease', 'unchanged']),
     answer_index: z.number().int().min(0).max(2),
     reflection: z.string().trim().min(20).max(2000),
@@ -149,7 +150,9 @@ export class LearningService {
     }
     if (!Object.keys(scalars).length || Object.values(scalars).some((x) => !Number.isFinite(x)))
       throw new BadRequestException('Model evidence is invalid');
-    const score = input.answer_index === lesson.definition.assessment.correct_index ? 1 : 0;
+    const personalized=input.personalization_id?(await rows<{specification:{correct_index:number;explanation:string}}>(tx,"SELECT specification FROM personalized_missions WHERE id=$1 AND owner_id=$2 AND lesson_id=$3 AND lesson_version=$4 AND status='completed'",[input.personalization_id,actor.id,lesson.id,lesson.version]))[0]:null;
+    if(input.personalization_id&&!personalized)throw new BadRequestException('This personalized assessment does not belong to this account and lesson');
+    const score = input.answer_index === (personalized?.specification.correct_index??lesson.definition.assessment.correct_index) ? 1 : 0;
     let xp = 0;
     if (score === 1) {
       const reward = await rows(
@@ -191,7 +194,7 @@ export class LearningService {
       completed: score === 1,
       achievements,
       scalars,
-      assessment_feedback:
+      assessment_feedback: personalized ? personalized.specification.explanation :
         score === 1
           ? 'Your conclusion uses model evidence and assumptions.'
           : 'Use model outputs and assumptions to support the conclusion.',

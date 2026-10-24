@@ -16,7 +16,7 @@ export function ErrorState({ error, retry, what, home = false }: { error: unknow
   return (
     <div className="glass empty" role="alert">
       <Mascot mood="puzzled" size={130} />
-      <Heading>{missing ? `This ${what} doesn\u2019t exist` : offline ? 'Can\u2019t reach the lab server' : `Couldn\u2019t load this ${what}`}</Heading>
+      <Heading>{missing ? `This ${what} doesn\u2019t exist` : offline ? 'Can\u2019t connect to your lab' : `Couldn\u2019t load this ${what}`}</Heading>
       <p className="muted">
         {missing ? 'It may have been renamed or retired. Pick another from the experiment list.'
           : offline ? 'Check your connection and try again. Runs you made on this device are kept and will show up once it reconnects.'
@@ -34,15 +34,15 @@ export function ErrorState({ error, retry, what, home = false }: { error: unknow
 export function RunTargetNote({ manifest }: { manifest: CatalogExperiment }) {
   const { target, reason } = useRunTarget(manifest);
   const [open, setOpen] = useState(false);
-  if (target === 'server') return <p className="faint row" style={{ gap: '.4rem' }}><Glyph name="server" size={16} />Runs on the Senku lab server with the {manifest.engine.id} engine.</p>;
-  if (target === 'device') return <p className="faint row" style={{ gap: '.4rem' }}><Glyph name="device" size={16} />Runs on this device. Sign in with lab server access for full time-course results.</p>;
-  if (reason === 'offline') return <p className="notice warn">This experiment needs the lab server. Reconnect to run it, or choose a saved device-capable lesson.</p>;
-  if (reason === 'pathway') return <div className="notice"><Glyph name="info" /><div className="stack snug"><p>Build and compile a reaction network before running this experiment.</p><Link className="btn quiet" href="/pathways">Open pathway builder</Link></div></div>;
+  if (target === 'server') return <p className="faint row" style={{ gap: '.4rem' }}><Glyph name="server" size={16} />Runs in your lab.</p>;
+  if (target === 'device') return <p className="faint row" style={{ gap: '.4rem' }}><Glyph name="device" size={16} />Runs on your device. Sign in with lab access to explore results over time.</p>;
+  if (reason === 'offline') return <p className="notice warn">Reconnect to run this experiment, or choose a lesson saved on your device.</p>;
+  if (reason === 'pathway') return <div className="notice"><Glyph name="info" /><div className="stack snug"><p>Prepare a reaction network before running this experiment.</p><Link className="btn quiet" href="/pathways">Open pathway builder</Link></div></div>;
   return (
     <div className="notice warn">
       <Glyph name="server" />
       <div className="stack snug">
-        <p>{reason === 'account' ? 'This experiment runs on the lab server. Create an account and redeem an invitation to run it.' : 'This experiment runs on the lab server. Redeem an invitation to run it.'}</p>
+        <p>{reason === 'account' ? 'Create an account and redeem an invitation to run this experiment.' : 'Redeem an invitation to run this experiment.'}</p>
         <div><button className="btn hema small" onClick={() => setOpen(true)}>{reason === 'account' ? 'Sign in or create account' : 'Redeem invitation'}</button></div>
       </div>
       <AccountDialog open={open} onOpenChange={setOpen} />
@@ -61,7 +61,7 @@ export function ModelCard({ manifest }: { manifest: CatalogExperiment }) {
       <p>{manifest.learning.objective}</p>
       <section className="stack snug" aria-label="Equations">
         <h3>Equations</h3>
-        {m.equations.map((e) => <p key={e} className="equation">{e}</p>)}
+        {m.equations.map((e) => <p key={e} className="equation">{manifest.id==='cell-colony'?'A cell-colony teaching model. Its growth rules and assumptions accompany each result.':e}</p>)}
       </section>
       <details className="more" open>
         <summary>Assumptions</summary>

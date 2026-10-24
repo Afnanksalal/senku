@@ -1,4 +1,4 @@
-param([string[]]$Engines = @('numerics','rdkit','cobrapy','roadrunner','tellurium','copasi','biosimulators','physicell'))
+param([string[]]$Engines = @('numerics','rdkit','cobrapy','roadrunner','tellurium','copasi','biosimulators','physicell','vina'))
 $ErrorActionPreference = 'Stop'
 Set-Location (Split-Path $PSScriptRoot -Parent)
 $dockerBin = Join-Path $env:LOCALAPPDATA 'Programs/DockerDesktop/resources/bin'

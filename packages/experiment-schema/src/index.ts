@@ -24,6 +24,7 @@ export const engineId = z.enum([
   'cobrapy',
   'physicell',
   'rdkit',
+  'vina',
 ]);
 export const identifier = z.string().regex(/^[a-z][a-z0-9-]{1,63}$/);
 export const version = z.string().regex(/^\d+\.\d+\.\d+$/);

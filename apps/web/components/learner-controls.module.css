@@ -1,0 +1,29 @@
+.mode { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .65rem; padding-bottom: .6rem; border-bottom: 1px solid var(--line); }
+.mode > span { font-size: .8rem; color: var(--ink-soft); }
+.modeButtons { display: flex; gap: .35rem; }
+.modeButtons button { min-height: 44px; font-size: .8rem; }
+.modeButtons button[aria-pressed='true'] { outline: 2px solid var(--chlorophyll); outline-offset: 1px; }
+.simple { display: grid; gap: .35rem; padding-block: 1rem; border-bottom: 1px solid var(--line); }
+.simple:last-child { border-bottom: 0; }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: .5rem; flex-wrap: wrap; }
+.heading > span:first-child { font-weight: 800; }
+.value { font-size: .85rem; color: var(--hema); font-weight: 800; font-variant-numeric: tabular-nums; }
+.help { color: var(--ink-soft); font-size: .8rem; line-height: 1.5; }
+.ends { display: flex; justify-content: space-between; gap: .75rem; font-size: .78rem; color: var(--ink-soft); }
+.ends span { min-width: 0; max-width: 48%; overflow-wrap: anywhere; }
+.ends span:last-child { text-align: right; }
+.precision { margin-top: .6rem; }
+.changed { box-shadow: -3px 0 0 var(--hema); padding-left: .65rem; }
+.examples { display: flex; flex-wrap: wrap; gap: .5rem; }
+.examples button { min-height: 44px; font-size: .8rem; }
+.resultHint { margin-top: .35rem; font-size: .78rem; line-height: 1.45; color: var(--ink-soft); }
+.quantityList { display: grid; gap: .75rem; margin-top: .65rem; }
+.quantity { display: grid; gap: .15rem; overflow-wrap: anywhere; font-size: .85rem; }
+
+.modeButtons { flex-wrap: wrap; min-width: 0; }
+.heading > *, .simple, .precision, .preciseControl { min-width: 0; overflow-wrap: anywhere; }
+.preciseControl :global(.param-head) { display: flex; flex-wrap: wrap; align-items: baseline; }
+.preciseControl :global(.param-head) > label { flex: 1 1 8rem; min-width: 0; }
+.preciseControl :global(.param-value) { flex: 0 1 5.75rem; max-width: 100%; }
+.preciseControl :global(.param-unit) { flex: 1 1 100%; min-width: 0; overflow-wrap: anywhere; }
+.preciseControl :global(.slider), .simple :global(.slider) { margin-inline: .75rem; width: calc(100% - 1.5rem); }

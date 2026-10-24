@@ -6,6 +6,8 @@ TOKEN = os.environ.get('SCIENCE_TOKEN', '')
 MODELS = {'numerics':['cell-energy','enzyme-explorer','population-dynamics','genetics-lab','diffusion-playground','ecosystem-rescue'],'rdkit':['molecule-sketchbook'],'cobrapy':['metabolism-explorer'],'roadrunner':['pathway-playground'],'tellurium':['pathway-playground'],'copasi':['pathway-playground'],'physicell':['cell-colony']}
 PARAMETERS={'cell-energy':{'oxygen','glucose','demand'},'enzyme-explorer':{'substrate_mM','vmax','km_mM','duration'},'population-dynamics':{'initial_population','capacity','growth_rate','duration'},'genetics-lab':{'parent1','parent2','sample_size'},'diffusion-playground':{'diffusivity','grid_size','steps'},'ecosystem-rescue':{'nutrients','light','temperature','duration'},'molecule-sketchbook':{'smiles','generate_3d'},'metabolism-explorer':{'uptake','maintenance'},'pathway-playground':{'duration'},'cell-colony':{'duration','initial_cells'}}
 slots = threading.BoundedSemaphore(1)
+MODELS['vina']=['molecular-docking']
+PARAMETERS['molecular-docking']={'target','smiles','exhaustiveness','num_modes','seed'}
 active, lock = {}, threading.Lock()
 def validate(job):
     if not isinstance(job,dict) or set(job) != {'job_id','model_id','parameters','seed','input','timeout_seconds'}: raise ValueError()
@@ -20,7 +22,7 @@ def validate(job):
 def limits():
     import resource
     os.setsid()
-    for kind,bound in [(resource.RLIMIT_CPU,65),(resource.RLIMIT_AS,805306368),(resource.RLIMIT_FSIZE,4194304),(resource.RLIMIT_NOFILE,64),(resource.RLIMIT_CORE,0)]: resource.setrlimit(kind,(bound,bound))
+    for kind,bound in [(resource.RLIMIT_CPU,65),(resource.RLIMIT_AS,1610612736 if ENGINE=='vina' else 805306368),(resource.RLIMIT_FSIZE,4194304),(resource.RLIMIT_NOFILE,64),(resource.RLIMIT_CORE,0)]: resource.setrlimit(kind,(bound,bound))
 def execute(job,cancelled):
     env={k:v for k,v in os.environ.items() if k!='SCIENCE_TOKEN'}
     env.update(OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1')

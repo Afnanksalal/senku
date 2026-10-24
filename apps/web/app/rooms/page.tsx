@@ -2,6 +2,7 @@
 import { requiresPathway } from '@senku/experiment-schema';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
+import { SelectField } from '../../components/SelectField';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { AccountDialog } from '../../components/AccountDialog';
@@ -38,11 +39,11 @@ export default function RoomsPage() {
   });
   return <div className="page stack loose">
     <header className={styles.intro}><h1>Make discoveries together</h1><p className="muted">Share the same model, adjust a common set of controls, and inspect the same experiment result. Private rooms keep your group focused.</p></header>
-    {!admitted && <div className="notice"><Glyph name="person" /><div className="stack snug"><p>Sign in to create a room or join another learner. Only lab-server runs need a compute invitation.</p><div><button className="btn small" onClick={() => setAccountOpen(true)}>Sign in or create account</button></div></div></div>}
+    {!admitted && <div className="notice"><Glyph name="person" /><div className="stack snug"><p>Sign in to create a room or join another learner. Only online experiments need a lab invitation.</p><div><button className="btn small" onClick={() => setAccountOpen(true)}>Sign in or create account</button></div></div></div>}
     <AccountDialog open={accountOpen} onOpenChange={setAccountOpen} />
     <div className={styles.columns}>
       <section className="glass panel stack" aria-labelledby="new-room"><h2 id="new-room" style={{ fontSize: '1.3rem' }}>Start a shared lab</h2><form className={styles.form} onSubmit={(e) => { e.preventDefault(); if (experiment && admitted) create.mutate(); }}>
-        <label className="field"><span>Experiment</span><select className="input" value={experiment?.id ?? ''} onChange={(e) => { setExperimentId(e.target.value); setCreateKey(crypto.randomUUID()); create.reset(); }} disabled={!experiments.length || create.isPending}>{experiments.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
+        <label className="field"><span>Experiment</span><SelectField label="Experiment" value={experiment?.id ?? ''} onValueChange={(value) => { setExperimentId(value); setCreateKey(crypto.randomUUID()); create.reset(); }} disabled={!experiments.length || create.isPending} options={experiments.map(item=>({value:item.id,label:item.name}))}/></label>
         {experiment && <p className="muted">{experiment.description}</p>}
         <p className="faint">A room starts at the model defaults. Editors can change the shared settings. Runs use the allowance of the learner who starts them.</p>
         {(create.error || catalog.error) && <p role="alert" className="notice alert">{create.error instanceof ApiError ? create.error.message : catalog.error ? 'Could not load experiments. Refresh and try again.' : 'Could not create this room.'}</p>}

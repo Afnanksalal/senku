@@ -1,30 +1,118 @@
-# Docker development setup
+# Docker setup
 
-The Docker workflow now builds the implemented backend, separate jobs process and isolated scientific adapters. See backend.md for the account/invitation flow, canonical API, production guards and verification limits. Frontend work remains separate.
+The supported local workflow runs the application, API, job process, data services and scientific workers in Docker. See [runtime configuration](configuration.md) for cloud authentication and [backend operations](backend.md) for deployment settings.
 
-## Commands
+## Requirements
 
-Start Docker Desktop with Linux/WSL2 backend. From the repository run `./scripts/setup.ps1` to build and start core services. Web: http://localhost:3000. API health: http://localhost:3001/health. MinIO console: http://localhost:9001. Credentials are generated locally in ignored .env; never publish them.
+Use Docker with Compose v2 and Linux containers. Windows needs Docker Desktop with WSL2. Windows helper commands use PowerShell; on Linux, use the Compose commands below. Native scientific builds require substantial disk space and download/build time. The full local stack has been exercised with about 8 GB available to Docker. Host Node.js and Python are not needed to build or run the containers.
 
-Run `./scripts/science.ps1` to use the committed hash-locked Linux/Python 3.11 dependency files and build independent numerics, RDKit, COBRApy, RoadRunner, Tellurium and BioSimulators utility environments. These workers have no published ports, are non-root/read-only, have bounded resources and use an internal network. BioSimulators utilities do not by themselves constitute a simulator adapter. COPASI has an isolated Python-binding image; PhysiCell builds its upstream template at pinned commit dbd3499250141b27600e91e501c54c46f68f2763. Their approved educational adapters now execute bounded jobs and have native reference checks.
+## Windows
 
-Use `docker compose ps`, `docker compose logs`, and `docker compose down` to inspect or stop the stack. Do not use `down -v` unless deliberately deleting local data. No GCP project is configured, no cloud resources provisioned, and no credit is spent by this setup. Invitation/quota policies are enforced. Optional Vertex ADC/service identity, explicit model access and live provider verification are still required before enabling real AI usage.
+From the repository root:
 
-The Node workspace lockfile records exact resolution. npm libraries are installed but not all imported by bootstrap screens. Scientific locks are created by the Linux lock builder, not resolved against Windows. Retrieved infrastructure/base digests are pinned where configured; built local image IDs and verification evidence are recorded in environment-verification.json. This is a local development stack, not an externally secured production deployment.
+```powershell
+./scripts/setup.ps1
+./scripts/science.ps1
+```
 
-## Optional Google Gemini connection
+`setup.ps1` creates ignored `.env` from `.env.example` when it does not exist, generating four distinct random secrets. It builds and starts the gateway, web, API, jobs, PostgreSQL, Redis and MinIO. Existing `.env` values are preserved; missing execution/signing keys are added.
 
-The selected development project is `project-f262e754-ce96-4f0c-b24`; the selected model is `gemini-4-argon` at `global`. Its organization policy disallows API keys. Use `./scripts/gemini-login.ps1` to sign in through the pinned Google CLI Docker image. Complete Google's consent screen yourself and enter its authorization code only in the local terminal. Credentials stay in ignored `.secrets/gcloud/` and are excluded from Docker build context.
+`science.ps1` builds a Linux dependency-lock helper, preserves committed locks by default, and starts the science profile. Use `-RefreshLocks` only for a deliberate dependency update. It starts eight simulation adapters and the BioSimulators utility environment; installing that utility does not make it a simulator. The separate molecule-editor dependency service is not a completed editor integration.
 
-After credentials and model access are verified, set `ENABLE_GEMINI=true` in the ignored `.env` and run `docker compose -f compose.yaml -f compose.gemini.yaml up -d api jobs`. This optional override mounts only the ADC JSON read-only into those two services. Ordinary Compose startup requires no Google credentials. Google credentials authenticate the provider only; Senku accounts continue to use local authentication. Never commit credentials or paste authorization codes into chat.
+## Linux
 
-## Verification and development tools
+For a fresh clone, generate local secrets with OpenSSL. This block preserves an existing `.env`:
 
-Run `./scripts/verify.ps1` for HTTP health, PostgreSQL, Redis/BullMQ and S3 round-trips. Run `./scripts/verify-science.ps1` for library/solver smoke checks. These are environment checks, not scientific validation of Senku lessons.
+```sh
+if [ ! -f .env ]; then
+  umask 077
+  cp .env.example .env
+  for key in POSTGRES_PASSWORD MINIO_ROOT_PASSWORD SCIENCE_TOKEN OFFLINE_SIGNING_KEY; do
+    value=$(openssl rand -hex 32)
+    sed -i "s/^${key}=REPLACE_WITH_RANDOM_SECRET$/${key}=${value}/" .env
+  done
+fi
 
-Use `docker compose --profile tools run --rm --no-deps tooling npm run typecheck` for workspace checks inside Docker. Regenerate Python locks deliberately with `./scripts/science.ps1 -RefreshLocks`; normal startup preserves committed locks. The isolated Ketcher dependency service has its own React 18 lockfile and reports editor_available=false until its UI is implemented. The backend suite is scripts/test-backend.ps1; add -LiveSources for real provider retrieval checks.
+docker compose up --build -d --wait
+docker compose --profile science up --build -d --wait
+```
 
-Main and editor lockfiles were resolved independently to avoid peer conflicts. Any host node_modules left from initial package resolution are not used by Docker builds or runtime. Use the Docker commands as the supported environment.
+Do not reuse a password across the database, object store and application keys. Keep `.env` private. On macOS, create the same four distinct values in `.env` manually or use compatible shell tools before running the Compose commands; the `sed -i` example above targets Linux.
 
-## Current local provider and gateway
-The running local stack has a verified ADC Gemini connection. General repository defaults still start with Gemini disabled. The nginx gateway is the public web entry on localhost3000 and forwards authenticated HTTP and websocket connections; Next itself is internal. Use scripts/setup.ps1 for restart: it includes compose.gemini.yaml automatically when enabled ADC exists. See status.md for live provider, game, offline and collaboration verification.
+## Local interfaces
+
+| Service | Address |
+| --- | --- |
+| App and same-origin API gateway | http://localhost:3000 |
+| API health | http://localhost:3001/health |
+| API documentation | http://localhost:3001/docs |
+| Local object-store console | http://localhost:9001 |
+
+Only localhost interfaces are published. Scientific workers have no host ports and communicate on an internal compute network. The gateway forwards authenticated HTTP and WebSocket traffic. The API and jobs are separate processes.
+
+Database and object-store credentials are in ignored `.env`; there are no shared default passwords. The root filesystem of runtime services is read-only, with temporary workspaces and bounded resources. This setup is for local operation, not a completed public deployment.
+
+## Accounts and compute access
+
+Guests can inspect the catalog and use supported device/practice paths. Register a local account to retain cloud progress. Remote scientific jobs and connected Senku features require an active invitation budget; cloud credentials alone do not grant a learner compute access.
+
+For a new local installation:
+
+1. Register an account in the application or through `/v1/auth/register` in the local API documentation. Its account UUID is available from the registration response or authenticated `/v1/me`.
+2. Provision that existing account from the operator terminal:
+
+   ```sh
+   docker compose exec api node apps/api/dist/cli.js admin <account-uuid>
+   ```
+
+3. As that administrator, use the authenticated API documentation to create a budget with `POST /v1/admin/budget-groups`, then issue an expiring invitation with `POST /v1/admin/invitations`.
+4. Redeem the returned code from the learner's profile, or with `POST /v1/invitations/redeem`.
+
+There is no HTTP self-promotion endpoint. Invitation codes are returned once and stored as hashes. Keep them private. A compute unit is an application allowance, not a live currency balance or a guarantee of provider credit eligibility.
+
+## Connect the companion
+
+The repository defaults to `ENABLE_GEMINI=false` so a clone can start without cloud credentials. This does not fabricate generated content: connected mission preparation, natural question routing, conversation and narration require the configured service. Practice and supported local models retain their separate labels.
+
+Use [runtime configuration](configuration.md) to choose a project, location and model and authenticate through ADC. The local override mounts only `.secrets/gcloud/application_default_credentials.json`, read-only, into API and jobs:
+
+```sh
+docker compose -f compose.yaml -f compose.gemini.yaml up -d api jobs
+```
+
+On Windows, `setup.ps1` includes that override automatically when the credential file exists and `.env` enables it. Subsequent recreation of API/jobs must retain the override if the local connection relies on that mount. Do not copy credentials into an image.
+
+## Verification
+
+```powershell
+./scripts/verify.ps1
+./scripts/verify-science.ps1
+./scripts/verify-docking.ps1
+./scripts/test-backend.ps1
+```
+
+```sh
+docker compose --profile tools run --rm --no-deps tooling npm run typecheck
+```
+
+Infrastructure and dependency checks do not establish biological validity. The backend suite uses isolated database/queue/storage namespaces. Add `-LiveSources` for real external paper/structure checks. Live explanation checks require an explicitly configured project and should be reported separately from substituted-provider tests.
+
+## Daily operation and troubleshooting
+
+```sh
+docker compose ps
+docker compose logs --tail 100 api jobs web
+docker compose down
+```
+
+Named volumes survive normal shutdown. Do not add `-v` unless deliberately deleting local data. Back up important work using the [operating guide](backend.md).
+
+After recreating web or API containers, restart the gateway if its upstream address is stale:
+
+```sh
+docker compose restart gateway
+```
+
+If a model is unavailable, confirm its science worker is healthy. A healthy API does not imply every optional worker is running. If generated content is unavailable, check provider configuration and learner admission independently. Do not put diagnostic output containing credentials into public issues.
+
+The Node workspace lock and per-worker Linux/Python locks own dependency resolution. Avoid resolving native science dependencies against Windows or introducing host `node_modules` into container builds. Public hosting additionally needs real TLS, operator identities, backups, monitoring and workload verification.

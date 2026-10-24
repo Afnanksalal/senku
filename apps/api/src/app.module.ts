@@ -35,6 +35,9 @@ import { MaintenanceService } from './operations/maintenance.service';
 import { CompanionController } from './companion/companion.controller';
 import { DomainController } from './sources/domain.controller';
 import { GeminiService } from './science/gemini.service';
+import { DynamicChallengeController, DynamicChallengeService } from './learning/dynamic-challenge.service';
+import { PersonalizedMissionController, PersonalizedMissionService } from './learning/personalized-mission.service';
+import { AiIntentController, AiIntentService } from './learning/ai-intent.service';
 
 @Module({
   controllers: [
@@ -51,6 +54,9 @@ import { GeminiService } from './science/gemini.service';
     ClassroomController,
     AccountController,
     ChallengeController,
+    DynamicChallengeController,
+    PersonalizedMissionController,
+    AiIntentController,
     OperationsController,
     CompanionController,
     DomainController,
@@ -66,6 +72,9 @@ import { GeminiService } from './science/gemini.service';
     StorageService,
     ScienceClient,
     GeminiService,
+    DynamicChallengeService,
+    PersonalizedMissionService,
+    AiIntentService,
     RunService,
     JobRuntime,
     LearningService,

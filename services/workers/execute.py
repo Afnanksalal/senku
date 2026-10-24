@@ -3,7 +3,7 @@ import importlib.metadata, json, math, os, sys
 ENGINE=os.environ['ENGINE']
 if __name__=='__main__':
     import resource
-    for kind,bound in [(resource.RLIMIT_CPU,65),(resource.RLIMIT_AS,805306368),(resource.RLIMIT_FSIZE,4194304),(resource.RLIMIT_NOFILE,64),(resource.RLIMIT_CORE,0)]: resource.setrlimit(kind,(bound,bound))
+    for kind,bound in [(resource.RLIMIT_CPU,65),(resource.RLIMIT_AS,1610612736 if ENGINE=='vina' else 805306368),(resource.RLIMIT_FSIZE,4194304),(resource.RLIMIT_NOFILE,64),(resource.RLIMIT_CORE,0)]: resource.setrlimit(kind,(bound,bound))
 def n(p,key,low,high,integer=False):
     value=p[key]
     if type(value) not in (int,float) or not math.isfinite(value) or not low<=value<=high or integer and int(value)!=value: raise ValueError(key)
@@ -162,6 +162,9 @@ def colony(job):
     return output(job,{'cell_count':len(frames[-1]['cells'])},{'cell_count':'cells'},[trajectory(['time','cell_count'],['min','cells'],times)],frames=frames,diagnostics={'source_commit':'dbd3499250141b27600e91e501c54c46f68f2763','template':'upstream_generic','threads':1,'dimensions':2})
 
 def main(job):
+    if ENGINE=='vina':
+        from docking.execute_docking import dock
+        return dock(job)
     if ENGINE=='numerics': return numerics(job)
     if ENGINE=='rdkit': return molecule(job)
     if ENGINE=='cobrapy': return metabolic(job)

@@ -28,6 +28,7 @@ export type CompanionRequest = {
     experiment_id: string;
     experiment_version: string;
     run_id?: string;
+    local?: { parameters: import('./runs').RunRecord['parameters']; seed: number };
     history: { role: 'user' | 'assistant'; text: string }[];
   };
 };

@@ -1,0 +1,17 @@
+name: Feature idea
+description: Suggest a learning experience or improvement.
+body:
+  - type: textarea
+    id: need
+    attributes:
+      label: What would this help learners do?
+      description: Describe the task and where the current experience gets in the way.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Your suggestion
+      description: Include alternatives, scientific sources or interface examples where useful.
+    validations:
+      required: true

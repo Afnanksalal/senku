@@ -21,6 +21,8 @@ import { useSession } from '../../../lib/session';
 import { enqueueAttempt, type OfflineAttempt } from '../../../lib/offline';
 import { OfflineSaveButton } from '../../../components/OfflineManager';
 import { CompanionChat } from '../../../components/CompanionChat';
+import {readEntryIntent} from '../../../lib/intent';
+import { loadPersonalizedMission, type PersonalizedMission } from '../../../lib/dynamic-missions';
 
 gsap.registerPlugin(useGSAP);
 
@@ -63,12 +65,14 @@ function Comparison({ base, next, prediction }: { base: RunRecord; next: RunReco
   );
 }
 
-function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperiment }) {
+function Mission({ lesson, manifest, personalized, practice, onNewMission }: { lesson: Lesson; manifest: CatalogExperiment; personalized?: PersonalizedMission; practice?: boolean; onNewMission?:()=>void }) {
   const def = lesson.definition;
+  const predictionPrompt = personalized?.prediction ?? def.prediction;
+  const assessmentPrompt = personalized?.assessment ?? def.assessment;
   const steps = def.steps;
   const [step, setStep] = useState(0);
   const [prediction, setPrediction] = useState('');
-  const [values, setValues] = useState<Parameters>(() => defaults(manifest));
+  const [values, setValues] = useState<Parameters>(() => personalized?.suggested_parameters ?? defaults(manifest));
   const [baseRef, setBaseRef] = useState<Ref>();
   const [nextRef, setNextRef] = useState<Ref>();
   const [answer, setAnswer] = useState<number | null>(null);
@@ -96,13 +100,16 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
   const record = useMutation({
     mutationFn: async ():Promise<AttemptResult|{queued:true;event_id:string}> => {
       const body = {
-        event_id: eventId, lesson_id: lesson.id, lesson_version: lesson.version, prediction,
+        event_id: eventId, lesson_id: lesson.id, lesson_version: lesson.version,
+        prediction: personalized ? ['increase','decrease','unchanged'][predictionPrompt.choices.indexOf(prediction)] : prediction,
         answer_index: answer, reflection: reflection.trim(),
+        ...(personalized ? { personalization_id: personalized.id } : {}),
         ...(next!.origin === 'device' ? { local: { parameters: next!.parameters, seed: next!.seed } } : { run_id: next!.id }),
       };
       try { return await api<AttemptResult>(`/v1/lessons/${lesson.id}/attempts`, {method:'POST',auth:true,body}); }
       catch(error) {
-        if(next?.origin==='device'&&(!navigator.onLine||(error instanceof ApiError&&error.status===0))) return enqueueAttempt(body as OfflineAttempt);
+        if(!personalized&&next?.origin==='device'&&(!navigator.onLine||(error instanceof ApiError&&error.status===0))) return enqueueAttempt(body as OfflineAttempt);
+        if(personalized&&(!navigator.onLine||(error instanceof ApiError&&error.status===0)))throw new Error('Reconnect to record this personalized assessment. Your results remain on this screen. Personalized answers cannot be scored against an offline practice pack.');
         throw error;
       }
     },
@@ -138,7 +145,7 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
         </div>
         <div className="row" style={{ gap: '.85rem' }}>
           <span className="chip tone" data-stain={stain} style={{ padding: '.45rem' }}><ConceptGlyph concept={def.concept} size={26} /></span>
-          <div><h1 style={{ fontSize: 'clamp(1.8rem, 1.3rem + 2vw, 2.6rem)' }}>{def.name}</h1><p className="muted">{def.objective}</p></div>
+          <div><h1 style={{ fontSize: 'clamp(1.8rem, 1.3rem + 2vw, 2.6rem)' }}>{personalized?.title ?? def.name}</h1><p className="muted">{personalized?.introduction ?? def.objective}</p></div>
         </div>
         <ol className="stepper" aria-label="Mission progress">
           {steps.map((s, i) => (
@@ -146,6 +153,8 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
           ))}
         </ol>
       </header>
+
+      {personalized ? <p className="faint">{personalized.source==='gemini'?'A fresh mission prepared for you around this science model.':'Practice mission based on this science model.'} {personalized.reason ? 'A prepared practice mission is available while a fresh version cannot be completed.' : ''}</p> : practice ? <p className="notice">Practice mode uses the saved lesson questions. This attempt uses the prepared practice version.</p> : null}
 
       {manifest.local_capable&&<div><OfflineSaveButton lessonId={lesson.id}/></div>}
 
@@ -155,12 +164,12 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
             <div className="row companion">
               <Mascot mood="think" size={120} />
               <div className="stack snug">
-                <h2>{def.prediction.question}</h2>
+                <h2>{predictionPrompt.question}</h2>
                 <p className="muted">Commit to a guess before you run anything. You&apos;ll compare it with the real result.</p>
               </div>
             </div>
             <div className="choices" role="radiogroup" aria-label="Your prediction">
-              {def.prediction.choices.map((c, i) => (
+              {predictionPrompt.choices.map((c, i) => (
                 <label key={c} className="choice"><input type="radio" name="prediction" value={c} checked={prediction === c} onChange={() => setPrediction(c)} /><span className="key">{i + 1}</span>{c.charAt(0).toUpperCase() + c.slice(1)}</label>
               ))}
             </div>
@@ -173,6 +182,7 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
               <h2>{!base ? 'First, run the starting conditions' : 'Now change one thing and run again'}</h2>
               {prediction && <span className="prediction-note"><span className="faint">Your guess</span><span className="hand">{prediction}</span></span>}
             </div>
+            {personalized && <div className="notice"><Glyph name="info"/><div className="stack snug"><p>{personalized.manipulation_instruction}</p><p className="faint">Start with {label(personalized.focus_parameter)}. Your suggested change is already set below; run the starting conditions first to make a fair comparison.</p></div></div>}
             <RunTargetNote manifest={manifest} />
             {launch.error && <p role="alert" className="notice alert"><Glyph name="info" />{launch.error instanceof ApiError ? launch.error.message : (launch.error as Error).message}</p>}
             {!base ? (
@@ -204,20 +214,20 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
 
         {current === 'observe' && base && next && (
           <>
-            <h2>What actually happened?</h2>
+            <h2>{personalized?.observation_question ?? 'What actually happened?'}</h2>
             <Comparison base={base} next={next} prediction={prediction} />
           </>
         )}
 
         {current === 'explain' && (
           <>
-            <h2>{def.assessment.question}</h2>
+            <h2>{assessmentPrompt.question}</h2>
             <div className="choices" role="radiogroup" aria-label="Your answer">
-              {def.assessment.choices.map((c, i) => (
+              {assessmentPrompt.choices.map((c, i) => (
                 <label key={c} className="choice"><input type="radio" name="answer" checked={answer === i} onChange={() => setAnswer(i)} /><span className="key">{i + 1}</span>{c}</label>
               ))}
             </div>
-            <label className="field"><span>In your own words, why did the result change?</span>
+            <label className="field"><span>{personalized?.reflection_question ?? 'In your own words, why did the result change?'}</span>
               <textarea className="input" value={reflection} onChange={(e) => setReflection(e.target.value)} minLength={MIN_REFLECTION} maxLength={2000} aria-describedby="reflection-hint" placeholder="Use what you saw in the numbers and the model's assumptions." />
             </label>
             <p id="reflection-hint" className="faint">{reflection.trim().length < MIN_REFLECTION ? `Write at least ${MIN_REFLECTION - reflection.trim().length} more characters.` : 'Looks good.'}</p>
@@ -232,7 +242,7 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
               <h2>You ran a real experiment!</h2>
             </div>
             <p className="muted">Your two runs are saved {next?.origin === 'device' ? 'on this device' : 'to your account'}. Take them into the lab to try more settings, compare results and check exactly how each one was made.</p>
-            {record.data&&'queued' in record.data ? <div className="notice"><Glyph name="device"/><div className="stack snug"><strong>Saved on this device, waiting to sync</strong><p>No cloud XP has been awarded yet. Reconnect and sync this attempt to have the server check your evidence.</p><Link className="btn quiet" href="/offline">Open offline work</Link></div></div> : record.data ? (
+            {record.data&&'queued' in record.data ? <div className="notice"><Glyph name="device"/><div className="stack snug"><strong>Saved on this device, waiting to sync</strong><p>No cloud XP has been awarded yet. Reconnect and sync this attempt to have Senku check your evidence.</p><Link className="btn quiet" href="/offline">Open offline work</Link></div></div> : record.data ? (
               <div className={`notice ${record.data.completed ? 'ok' : 'warn'}`}>
                 <Glyph name={record.data.completed ? 'check' : 'info'} />
                 <div className="stack snug">
@@ -261,6 +271,7 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
             )}
             <div className="row">
               <Link className="btn" href={labHref}><Glyph name="flask" size={18} />Open these runs in the lab</Link>
+              {personalized&&onNewMission&&<button className="btn quiet" onClick={onNewMission}>Try a fresh mission</button>}
               <Link className="btn quiet" href="/">Choose another experiment</Link>
             </div>
           </div>
@@ -283,11 +294,52 @@ function Mission({ lesson, manifest }: { lesson: Lesson; manifest: CatalogExperi
 
 export default function LearnPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  const owner = useSession(s=>s.user?.id);
   const lesson = useLesson(id);
   const def = lesson.data?.definition;
   const manifest = useExperiment(def?.experiment_id ?? '', def?.experiment_version);
   if (lesson.error) return <div className="page"><ErrorState error={lesson.error} retry={() => void lesson.refetch()} what="mission" /></div>;
   if (manifest.error) return <div className="page"><ErrorState error={manifest.error} retry={manifest.refetch} what="experiment" /></div>;
   if (!def || !manifest.data) return <div className="page stack" aria-busy="true"><div className="skeleton" style={{ height: '7rem' }} /><div className="skeleton" style={{ height: '24rem' }} /></div>;
-  return <Mission lesson={lesson.data!} manifest={manifest.data} />;
+  return <MissionPreparation key={`${owner??'anonymous'}:${lesson.data!.id}:${lesson.data!.version}`} lesson={lesson.data!} manifest={manifest.data} />;
+}
+
+function MissionPreparation({lesson,manifest}:{lesson:Lesson;manifest:CatalogExperiment}) {
+  const user=useSession(s=>s.user);
+  const [mission,setMission]=useState<PersonalizedMission>();
+  const [error,setError]=useState<Error>();
+  const [practice,setPractice]=useState(false);
+  const [retry,setRetry]=useState(0);
+  const [accountOpen,setAccountOpen]=useState(false);
+  const [online,setOnline]=useState(true);
+  const [ready,setReady]=useState(false);
+  const fresh=useRef(false);
+  useEffect(()=>{setReady(true);const update=()=>setOnline(navigator.onLine);update();window.addEventListener('online',update);window.addEventListener('offline',update);return()=>{window.removeEventListener('online',update);window.removeEventListener('offline',update);};},[]);
+  useEffect(()=>{
+    setMission(undefined);setError(undefined);
+    if(!ready||!user||user.role==='guest'||!online||practice)return;
+    let active=true;
+    const createFresh=fresh.current;fresh.current=false;
+    loadPersonalizedMission(user.id,lesson.id,lesson.version,{difficulty:'gentle',...(readEntryIntent('/learn/'+lesson.id,user.id)?{interest:readEntryIntent('/learn/'+lesson.id,user.id)!.message}:{})},createFresh).then(value=>{if(active)setMission(value);}).catch(value=>{if(active)setError(value instanceof Error?value:new Error('The mission could not be prepared.'));});
+    return()=>{active=false;};
+  },[user?.id,user?.role,lesson.id,lesson.version,ready,online,practice,retry]);
+  if(practice)return <Mission key={`practice:${user?.id??'guest'}`} lesson={lesson} manifest={manifest} practice/>;
+  if(mission)return <Mission key={`${user?.id}:${mission.id}`} lesson={lesson} manifest={manifest} personalized={mission} onNewMission={()=>{fresh.current=true;setMission(undefined);setRetry(x=>x+1);}}/>;
+  const guest=ready&&(!user||user.role==='guest');
+  const waiting=!ready||(!error&&online&&!guest);
+  return <main className="page mission-page stack loose">
+    <Link className="btn ghost small" href="/learn"><Glyph name="back" size={16}/>Learning map</Link>
+    <header className="stack snug"><p className="eyebrow">Your science mission</p><h1>{lesson.definition.name}</h1></header>
+    <section className="glass panel stack loose" aria-busy={waiting} aria-live="polite">
+      <div className="row companion"><Mascot mood="think" size={120}/><div className="stack snug"><h2>{waiting?'Preparing a mission for you':!online?'Explore with an offline practice mission':guest?'Make this mission yours':'Your mission needs a moment'}</h2><p className="muted">{waiting?'Senku is preparing your prediction, experiment prompts and questions around the science model.':!online?'Fresh Questions for Senku need a connection. Saved practice uses the approved lesson and runs on supported devices.':guest?'Sign in for personalized questions and saved learning progress. You can also explore the practice lesson.':error?.message}</p></div></div>
+      {waiting&&<div className="stack" aria-hidden="true"><div className="skeleton" style={{height:'2rem',maxWidth:'70%'}}/>{[0,1,2].map(i=><div className="skeleton" key={i} style={{height:'3.6rem'}}/>)}</div>}
+      <div className="row">
+        {guest&&<button className="btn" onClick={()=>setAccountOpen(true)}>Sign in for my mission</button>}
+        {error&&online&&<button className="btn" onClick={()=>{setError(undefined);setRetry(x=>x+1);}}>Retry this mission</button>}
+        <button className="btn quiet" onClick={()=>setPractice(true)}>{waiting?'Use practice while I wait':'Explore practice lesson'}</button>
+      </div>
+      {error instanceof ApiError&&error.status===403&&<p className="faint">Personalized missions use invitation-only cloud access. <Link href="/profile">Redeem your invitation in your profile</Link>, then retry.</p>}
+      <AccountDialog open={accountOpen} onOpenChange={setAccountOpen}/>
+    </section>
+  </main>;
 }

@@ -1,6 +1,7 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CatalogService } from './catalog.service';
+import { dockingTargets, dockingLimitations } from './docking';
 import { Public, pagination } from '../common/http';
 import { identifier, version } from '@senku/experiment-schema';
 
@@ -9,6 +10,9 @@ import { identifier, version } from '@senku/experiment-schema';
 @Controller('v1')
 export class CatalogController {
   constructor(private readonly catalog: CatalogService) {}
+  @Get('docking/targets') docking() {
+    return { items: dockingTargets, defaults: { target: 'trypsin', smiles: 'NC(=N)c1ccccc1', exhaustiveness: 2, num_modes: 3, seed: 42 }, limits: { max_smiles_length: 160, max_heavy_atoms: 32, max_rotatable_bonds: 8 }, limitations: dockingLimitations };
+  }
   @Get('subjects') subjects() {
     return this.catalog.subjects();
   }

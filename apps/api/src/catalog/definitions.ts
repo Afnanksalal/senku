@@ -1,4 +1,5 @@
 import { Experiment, experimentSchema } from '@senku/experiment-schema';
+import { dockingExperiment } from './docking';
 
 const number = (unit: string, min: number, max: number, value: number, integer = false) => ({
   type: 'number' as const,
@@ -50,6 +51,7 @@ const educational = (
     safety: { class: 'approved_educational', user_code: false },
   });
 export const experiments: Experiment[] = [
+  dockingExperiment,
   educational(
     'molecule-sketchbook',
     'Molecule Sketchbook',
@@ -206,6 +208,7 @@ export const engineCapabilities = [
     ],
     execution: true,
   },
+  { id: 'vina', models: ['molecular-docking'], execution: true },
   { id: 'roadrunner', models: ['pathway-playground'], execution: true },
   { id: 'tellurium', models: ['pathway-playground'], execution: true },
   { id: 'copasi', models: ['pathway-playground'], execution: true },

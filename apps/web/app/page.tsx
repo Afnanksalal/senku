@@ -3,7 +3,7 @@
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { ConceptGlyph, Glyph, stainFor } from '../components/Glyph';
 import { Mascot } from '../components/Mascot';
 import { ErrorState } from '../components/States';
@@ -69,6 +69,8 @@ export default function Home() {
   const catalog = useCatalog();
   const lessons = useLessons();
   const tray = useRef<HTMLDivElement>(null);
+  const [search,setSearch]=useState('');
+  const [availability,setAvailability]=useState('all');
 
   useGSAP(() => {
     if (!catalog.data?.length) return;
@@ -79,6 +81,7 @@ export default function Home() {
 
   const subject = subjects.data?.[0];
   const experiments = [...(catalog.data ?? [])].sort((a, b) => a.name.localeCompare(b.name));
+  const visible=experiments.filter(e=>(availability==='all'||(availability==='device'?e.local_capable:!e.local_capable))&&`${e.name} ${e.description} ${e.learning.concept}`.toLowerCase().includes(search.toLowerCase().trim()));
 
   return (
     <div className="page stack loose">
@@ -86,7 +89,7 @@ export default function Home() {
         <div className="hero-copy">
           <h1>What will you find out today?</h1>
           <p className="muted">
-            Make a prediction, change what&apos;s really in the model, and see what happens. Every result comes from an actual run you can open, compare and check.
+            A whole lab of little discoveries. Pick something that makes you curious.
           </p>
           {subject && <p className="row" style={{ gap: '.5rem' }}><span className="chip tone" data-stain="chlorophyll">{subject.name}</span><span className="faint">{subject.description}</span></p>}
         </div>
@@ -103,10 +106,12 @@ export default function Home() {
         <>
           <Recent catalog={experiments} />
           <section aria-labelledby="all" className="stack">
-            <div className="spread"><h2 id="all">Experiments</h2><span className="faint">{experiments.length} available</span></div>
+            <div className="spread"><h2 id="all">Experiments</h2><span className="faint" role="status">{visible.length} of {experiments.length} experiments</span></div>
+            <div className="catalog-filters"><label className="catalog-search"><Glyph name="search" size={21}/><input className="input" type="search" value={search} onChange={e=>setSearch(e.target.value)} placeholder="Find your next discovery" aria-label="Search experiments"/></label><div className="catalog-segments" role="group" aria-label="Where experiments run">{[['all','All experiments'],['device','On your device'],['server','Lab server']].map(([value,title])=><button key={value} className="btn quiet small" aria-pressed={availability===value} onClick={()=>setAvailability(value)}>{title}</button>)}</div></div>
             <div className="tray" ref={tray}>
-              {experiments.map((e) => <Slide key={e.id} e={e} lesson={lessons.data?.find((l) => l.experiment_id === e.id && l.experiment_version === e.version)} />)}
+              {visible.map((e) => <Slide key={e.id} e={e} lesson={lessons.data?.find((l) => l.experiment_id === e.id && l.experiment_version === e.version)} />)}
             </div>
+            {!visible.length&&<div className="solid panel stack"><h3>No experiments match yet</h3><p className="muted">Try another word, or show the whole lab.</p><button className="btn quiet" onClick={()=>{setSearch('');setAvailability('all');}}>Show all experiments</button></div>}
           </section>
         </>
       )}

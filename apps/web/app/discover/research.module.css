@@ -7,7 +7,7 @@
 .search label { flex: 1 1 18rem; min-width: 0; }
 .search input { min-height: 48px; }
 .workspace { display: grid; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); }
-.form { display: grid; gap: 1.1rem; }
+.form { display: grid; gap: 1.25rem; }
 .form label { min-width: 0; }
 .form select { width: 100%; }
 .hint { max-width: 65ch; color: var(--ink-soft); }
@@ -52,3 +52,6 @@
 .events li { padding-block: .4rem; border-bottom: 1px solid var(--line); }
 @media (min-width: 1000px) { .workspace { grid-template-columns: minmax(0, 1.5fr) minmax(280px, 1fr); align-items: start; } .split { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 480px) { .mode { grid-template-columns: minmax(0, 1fr); } .search .btn { width: 100%; } }
+
+.search{row-gap:1.25rem}
+.search :global(.field),.form :global(.field){gap:.5rem;min-width:0}

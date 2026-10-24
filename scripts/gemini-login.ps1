@@ -1,7 +1,9 @@
-param([string]$Project = 'project-f262e754-ce96-4f0c-b24')
+param([Parameter(Mandatory=$true)][ValidateNotNullOrEmpty()][string]$Project)
 $ErrorActionPreference = 'Stop'
-$dockerBin = Join-Path $env:LOCALAPPDATA 'Programs/DockerDesktop/resources/bin'
-if (Test-Path $dockerBin) { $env:PATH = "$dockerBin;$env:PATH" }
+if ($env:LOCALAPPDATA) {
+  $dockerBin = Join-Path $env:LOCALAPPDATA 'Programs/DockerDesktop/resources/bin'
+  if (Test-Path $dockerBin) { $env:PATH = "$dockerBin;$env:PATH" }
+}
 $repo = Split-Path $PSScriptRoot -Parent
 $credentialDir = Join-Path $repo '.secrets/gcloud'
 New-Item -ItemType Directory -Force -Path $credentialDir | Out-Null

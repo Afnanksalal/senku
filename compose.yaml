@@ -34,6 +34,10 @@ services:
       context: .
       dockerfile: Dockerfile
       target: web
+      args:
+        SENKU_SITE_URL: ${SENKU_SITE_URL:-http://localhost:3000}
+    environment:
+      SENKU_SITE_URL: ${SENKU_SITE_URL:-http://localhost:3000}
     expose: ["3000"]
     networks: [app]
     init: true
@@ -147,6 +151,27 @@ services:
     build:
       context: .
       dockerfile: services/workers/numerics/Dockerfile
+    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
+    networks: [compute]
+    init: true
+    read_only: true
+    tmpfs: ["/tmp:size=256m,mode=1777"]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    mem_limit: 1g
+    cpus: 1.0
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health')"]
+      interval: 20s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+  vina:
+    profiles: [science]
+    build:
+      context: .
+      dockerfile: services/workers/docking/Dockerfile
     environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
     networks: [compute]
     init: true

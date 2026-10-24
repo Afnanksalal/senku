@@ -1,9 +1,10 @@
 'use client';
 import Link from 'next/link';
+import { SelectField } from '../../components/SelectField';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import type { Parameters } from '@senku/experiment-schema';
 import { AccountDialog } from '../../components/AccountDialog';
 import { ShareResource } from '../../components/ShareResource';
@@ -16,6 +17,7 @@ import { useSession } from '../../lib/session';
 import { fmt, label, unitText, when, shortId } from '../../lib/format';
 import { exportReport, investigationDone, safeSourceUrl, type Investigation, type InvestigationReport, type InvestigationSummary, type Paper, type PaperPage, type Structure, type StructureSearch } from '../../lib/research';
 import styles from './research.module.css';
+import {readEntryIntent} from '../../lib/intent';
 
 const message = (e: unknown) => e instanceof ApiError ? e.message : 'The request did not finish. Try again.';
 const ProteinViewer = dynamic(() => import('./ProteinViewer'), { ssr: false, loading: () => <p role="status">Preparing the structure viewer...</p> });
@@ -91,6 +93,7 @@ function InvestigationComposer({ onCreated }: { onCreated: (id: string) => void 
   const [accountOpen, setAccountOpen] = useState(false);
   const [mode, setMode] = useState<'ai' | 'manual'>('ai');
   const [question, setQuestion] = useState('');
+  useEffect(()=>{const entry=readEntryIntent('/discover',user?.id);if(entry)setQuestion(entry.message);},[user?.id]);
   const [literature, setLiterature] = useState('');
   const [experimentId, setExperimentId] = useState('cell-energy');
   const [parameters, setParameters] = useState<Parameters | null>(null);
@@ -120,12 +123,12 @@ function InvestigationComposer({ onCreated }: { onCreated: (id: string) => void 
     <form className={styles.form} onSubmit={(e) => { e.preventDefault(); create.mutate(); }}>
       <label className="field"><span>Your research question</span><textarea className="input" minLength={10} maxLength={1000} required value={question} onChange={(e) => { setQuestion(e.target.value); resetKey(); }} placeholder="How does a limiting resource change the energy available to a cell?" /></label>
       <label className="field"><span>Literature search (optional)</span><input className="input" minLength={2} maxLength={200} value={literature} onChange={(e) => { setLiterature(e.target.value); resetKey(); }} placeholder="For example, cellular energy limiting resources" /></label>
-      {mode === 'ai' ? <><label className="field"><span>Experiment scope</span><select className="input" value={experiment?.id??''} onChange={e=>{setExperimentId(e.target.value);resetKey();}}>{experiments.map(e=><option key={e.id} value={e.id}>{e.name}</option>)}</select></label><p className="notice"><Glyph name="spark" /><span>Gemini will plan a bounded comparison within this approved model, execute the real runs, and explain the evidence. This explores a teaching model, not a real-world biological prediction.</span></p></> : <>
-        <label className="field"><span>Approved experiment</span><select className="input" value={experiment?.id ?? ''} onChange={(e) => { setExperimentId(e.target.value); setParameters(null); setVary(''); setAlternative(''); resetKey(); }}>{experiments.map((e) => <option key={e.id} value={e.id}>{e.name}</option>)}</select></label>
+      {mode === 'ai' ? <><label className="field"><span>Experiment scope</span><SelectField label="Experiment scope" value={experiment?.id ?? ''} onValueChange={value=>{setExperimentId(value);resetKey();}} options={experiments.map(e=>({value:e.id,label:e.name}))}/></label><p className="notice"><Glyph name="spark" /><span>Senku will plan a focused comparison within this science model, run the calculations, and explain the evidence. This explores a teaching model, not a real-world biological prediction.</span></p></> : <>
+        <label className="field"><span>Approved experiment</span><SelectField label="Approved experiment" value={experiment?.id ?? ''} onValueChange={(value) => { setExperimentId(value); setParameters(null); setVary(''); setAlternative(''); resetKey(); }} options={experiments.map(e=>({value:e.id,label:e.name}))}/></label>
         {experiment && <details className="more"><summary>Starting settings</summary><ParameterControls manifest={experiment} values={baseline} onChange={(v) => { setParameters(v); resetKey(); }} /></details>}
-        <div className={styles.split}><label className="field"><span>Change one parameter</span><select className="input" value={parameter ?? ''} onChange={(e) => { setVary(e.target.value); setAlternative(''); resetKey(); }}>{numeric.map(([name, p]) => <option key={name} value={name}>{label(name, p.unit)}</option>)}</select></label><label className="field"><span>Value for the second run</span><input className="input num" type="number" required min={spec?.type === 'number' ? spec.min : undefined} max={spec?.type === 'number' ? spec.max : undefined} step={spec?.type === 'number' && spec.integer ? 1 : 'any'} value={alternative} onChange={(e) => { setAlternative(e.target.value); resetKey(); }} /></label></div>
+        <div className={styles.split}><label className="field"><span>Change one parameter</span><SelectField label="Change one parameter" value={parameter ?? ''} onValueChange={(value) => { setVary(value); setAlternative(''); resetKey(); }} options={numeric.map(([name,p])=>({value:name,label:label(name,p.unit)}))} disabled={!numeric.length}/></label><label className="field"><span>Value for the second run</span><input className="input num" type="number" required min={spec?.type === 'number' ? spec.min : undefined} max={spec?.type === 'number' ? spec.max : undefined} step={spec?.type === 'number' && spec.integer ? 1 : 'any'} value={alternative} onChange={(e) => { setAlternative(e.target.value); resetKey(); }} /></label></div>
         {spec?.type === 'number' && <p className="faint">Starting value: {String(baseline[parameter!])}. Choose {fmt(spec.min)} to {fmt(spec.max)} {unitText(spec.unit)}. The two runs use the same seed.</p>}
-        <label className={styles.checkbox}><input type="checkbox" checked={aiReport} onChange={(e) => { setAiReport(e.target.checked); resetKey(); }} /><span>Add a Gemini explanation to the evidence report</span></label>
+        <label className={styles.checkbox}><input type="checkbox" checked={aiReport} onChange={(e) => { setAiReport(e.target.checked); resetKey(); }} /><span>Add Senku’s explanation to the evidence report</span></label>
       </>}
       {!admitted && <div className={styles.notice}>{!user || user.role === 'guest' ? <><p>Sign in to save an investigation. Lab access is required for cloud computation.</p><button type="button" className="btn quiet small" onClick={() => setAccountOpen(true)}>Sign in or create account</button></> : usage.isLoading ? <p>Checking lab access...</p> : usage.error ? <Failure error={usage.error} /> : <p>Your account needs a lab invitation before an investigation can run. Redeem it from your account menu.</p>}</div>}
       {catalog.error && <Failure error={catalog.error} />}
@@ -150,7 +153,7 @@ function Report({ report, id, catalog }: { report: InvestigationReport; id: stri
   return <section className="glass panel stack loose" aria-labelledby="report-title">
     <div className="panel-title"><h2 id="report-title">What the evidence says</h2><button className="btn quiet small" onClick={() => exportReport(report, id)}><Glyph name="download" size={16} />Export report</button></div>
     <p className={styles.narrative}>{report.narrative.explanation ?? report.narrative.text ?? 'No narrative was returned.'}</p>
-    {report.narrative.mode === 'gemini' && <p className="faint">AI-generated explanation from {report.narrative.model ?? 'Gemini'}. Check it against the recorded results below.</p>}
+    {report.narrative.mode === 'gemini' && <p className="faint">Senku’s explanation. Check it against the recorded results below.</p>}
     <h3>Recorded model outputs</h3>
     <div className={styles.facts}>{report.facts.map((f) => <article key={f.run_id} className={styles.fact}><div className="spread"><h3>{catalog.find((e) => e.id === f.experiment_id)?.name ?? label(f.experiment_id.replaceAll('-', ' '))}</h3><Link className="btn quiet small" href={`/lab/${f.experiment_id}?v=${f.experiment_version}&runs=${f.run_id}`}>Open run {shortId(f.run_id)}</Link></div><p className="faint">{Object.entries(f.parameters).map(([k, v]) => `${label(k)}: ${String(v)}`).join('; ')}. Seed {f.seed}.</p>{f.status !== 'completed' ? <p className="notice warn">This run {f.status}. No missing values were inferred.</p> : f.scalars ? <dl>{Object.entries(f.scalars).map(([k, v]) => <div key={k}><dt>{label(k)}</dt><dd>{fmt(v)}</dd><span className="faint">{unitText(f.units?.[k])}</span></div>)}</dl> : <p>The retained numerical output is unavailable.</p>}</article>)}</div>
     <div className="notice warn"><Glyph name="info" /><div className="stack snug"><strong>Limits of this investigation</strong><ul className="list">{report.critique.limitations.map((x) => <li key={x}>{x}</li>)}</ul>{!report.critique.all_runs_completed && <p>Some runs did not complete. Treat this comparison as incomplete.</p>}</div></div>
@@ -190,7 +193,7 @@ function InvestigationDetail({ id }: { id: string }) {
   </div>;
 }
 export default function ResearchWorkspace({ investigationId }: { investigationId?: string }) {
-  const [tab, setTab] = useState<'papers' | 'structures' | 'investigations'>('papers');
+  const [tab, setTab] = useState<'papers' | 'structures' | 'investigations'>('investigations');
   const router = useRouter();
   return <div className="page stack loose">
     <header className={styles.header}>{investigationId && <Link href="/discover" className="nav-link">Back to Discover</Link>}<h1>{investigationId ? 'Your investigation' : 'Discover'}</h1><p className="muted">Ask a question. Find its sources. Test an idea with a real model.</p></header>

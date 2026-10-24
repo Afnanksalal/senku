@@ -8,6 +8,8 @@ RUN --mount=type=cache,target=/root/.npm npm ci --no-audit --no-fund
 COPY . .
 
 FROM base AS web-build
+ARG SENKU_SITE_URL=http://localhost:3000
+ENV SENKU_SITE_URL=$SENKU_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV SENKU_API_INTERNAL_URL=http://api:3001
 RUN npm run build -w @senku/experiment-schema && npm run build -w @senku/web

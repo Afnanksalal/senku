@@ -1,6 +1,6 @@
 # Bootstrap dependency choices
 
-Selected during authorized repository setup: npm workspaces, Node 24, TypeScript 5.9, Next/React web, NestJS API, Radix primitives with custom UI, ECharts, Mol* as primary molecule viewer, R3F/Three/Drei, GSAP, React Flow, IndexedDB helpers, Yjs and Socket.IO. Drizzle/PostgreSQL for future persistence. Google Gen AI SDK and Firebase SDKs are available; auth design remains to be implemented. Firebase SDK installation does not provision a project or enable anonymous sign-in. S3 adapter is available for local MinIO.
+Selected during authorized repository setup: npm workspaces, Node 24, TypeScript 5.9, Next/React web, NestJS API, Radix primitives with custom UI, ECharts, Mol* as primary molecule viewer, R3F/Three/Drei, GSAP, React Flow, IndexedDB helpers, Yjs and Socket.IO. PostgreSQL provides durable persistence. The Google Gen AI SDK provides the configured explanation service; authentication is local email/password with opaque sessions and no Firebase integration. Private S3-compatible artifacts use local MinIO.
 
 Packages and direct versions are in workspace manifests; lockfile owns transitive versions. No Lucide dependency is intentionally added. No paid asset-generation SDK is included. Canvas 2D is built into the browser; PixiJS and a second molecular viewer are unnecessary until a concrete workload justifies them. Scientific Python families are isolated to avoid native version conflicts.
 

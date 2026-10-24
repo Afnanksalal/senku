@@ -44,6 +44,9 @@ elif engine == 'copasi':
 elif engine == 'biosimulators':
     from biosimulators_utils.sedml.data_model import SedDocument
     assert SedDocument() is not None
+elif engine == 'vina':
+    import vina, meeko
+    assert vina.Vina(sf_name='vina', cpu=1, seed=42).info()['scoring_function'] == 'vina'
 elif engine == 'physicell':
     result = subprocess.run(['ldd', '/opt/physicell/project'], capture_output=True, text=True, check=True)
     assert 'not found' not in result.stdout

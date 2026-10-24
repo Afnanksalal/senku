@@ -2,19 +2,57 @@ name: Backend verification
 on:
   workflow_dispatch:
   pull_request:
-    paths: ['apps/api/**', 'packages/experiment-schema/**', 'services/workers/**', 'scripts/**', 'Dockerfile', 'compose.yaml', 'package*.json', '.github/workflows/backend.yml']
   push:
-    branches: [master]
-    paths: ['apps/api/**', 'packages/experiment-schema/**', 'services/workers/**', 'scripts/**', 'Dockerfile', 'compose.yaml', 'package*.json', '.github/workflows/backend.yml']
+    branches: [master, main]
 permissions:
   contents: read
 concurrency:
-  group: backend-${{ github.ref }}
+  group: verification-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  backend:
+  secrets:
+    name: Secret scan of source and history
     runs-on: ubuntu-24.04
-    timeout-minutes: 60
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - name: Scan the checked-out source and complete history
+        shell: bash
+        run: |
+          scanner='zricethezav/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f'
+          docker run --rm --mount "type=bind,source=$GITHUB_WORKSPACE,target=/repo,readonly" "$scanner" dir /repo --redact --no-banner
+          docker run --rm --mount "type=bind,source=$GITHUB_WORKSPACE,target=/repo,readonly" -e GIT_CONFIG_COUNT=1 -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo "$scanner" git /repo --log-opts=--all --redact --no-banner
+  quality:
+    name: Build, types and dependency audit
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: Build every workspace from the clean checkout
+        run: npm run build
+      - run: npm run typecheck
+      - name: Check molecular parser, coordinate display and request keys
+        run: node apps/web/tests/docking.contract.cjs
+      - run: npm audit --audit-level=moderate
+      - name: Audit the isolated molecule editor lock
+        run: npm audit --prefix services/molecule-editor --audit-level=moderate
+      - run: git diff --check
+  integration:
+    name: Real services, native science and browser
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      COMPOSE_PARALLEL_LIMIT: '2'
     defaults:
       run:
         shell: pwsh
@@ -22,7 +60,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Generate ephemeral local credentials
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Generate ephemeral test credentials
         run: |
           $taskText=Get-Content .env.example -Raw
           foreach($taskKey in @('POSTGRES_PASSWORD','MINIO_ROOT_PASSWORD','SCIENCE_TOKEN','OFFLINE_SIGNING_KEY')) {
@@ -31,11 +73,34 @@ jobs:
             $taskText=$taskText.Replace("${taskKey}=REPLACE_WITH_RANDOM_SECRET","${taskKey}=$([Convert]::ToHexString($taskBytes).ToLower())")
           }
           [IO.File]::WriteAllText((Join-Path (Get-Location) '.env'),$taskText)
-      - name: Run isolated backend and native science verification
+      - name: Run isolated API, learning, storage and native solver checks
         run: ./scripts/test-backend.ps1
-      - name: Inspect service state after failure
+      - name: Start the real app for browser verification
+        run: |
+          docker compose up -d --no-build --wait --wait-timeout 180 api jobs web gateway
+          if($LASTEXITCODE -ne 0){throw 'Application did not become ready'}
+      - name: Install the locked browser test runtime
+        run: |
+          npm ci --no-audit --no-fund
+          if($LASTEXITCODE -ne 0){throw 'Browser dependencies failed'}
+          npx playwright install --with-deps chromium
+          if($LASTEXITCODE -ne 0){throw 'Chromium installation failed'}
+      - name: Verify responsive pages, metadata and offline shell
+        run: node scripts/verify-web.cjs
+      - name: Capture service diagnostics on failure
         if: failure()
-        run: docker compose --profile science ps --all
+        run: |
+          docker compose --profile science ps --all
+          docker compose logs --no-color --tail 100 api jobs web gateway
+          docker system df
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: browser-verification
+          path: artifacts/ci/browser/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Stop ephemeral infrastructure
         if: always()
         run: docker compose --profile science down

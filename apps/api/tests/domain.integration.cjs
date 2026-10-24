@@ -2,6 +2,16 @@ const assert = require('node:assert/strict'),
   { randomUUID, createHash } = require('node:crypto'),
   { Pool } = require('pg');
 const { localScalars } = require('@senku/experiment-schema');
+// Match the declared model: limiting resource, percentage scale, hard 100 cap.
+for (const [parameters, expected] of [
+  [{ oxygen: 100, glucose: 100, demand: 1 }, 100],
+  [{ oxygen: 100, glucose: 100, demand: 50 }, 100],
+  [{ oxygen: 20, glucose: 80, demand: 50 }, 40],
+  [{ oxygen: 80, glucose: 20, demand: 50 }, 40],
+  [{ oxygen: 0, glucose: 100, demand: 50 }, 0],
+]) {
+  assert.equal(localScalars('cell-energy', parameters).energy_index, expected);
+}
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
     options: `-c search_path=${process.env.DB_SCHEMA},public`,

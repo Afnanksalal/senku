@@ -21,6 +21,8 @@ Current explicit user requirements take precedence over conflicting source sugge
 
 ## Topics
 
+- [Molecular docking: curated structures, preparation, controls and limits](docking.md)
+
 - [Implemented backend and operating guide](backend.md)
 - [Backend coverage and verification limits](backend-coverage.md)
 

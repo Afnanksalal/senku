@@ -34,6 +34,7 @@ export class OperationsController {
         [
           'numerics',
           'rdkit',
+          'vina',
           'roadrunner',
           'tellurium',
           'copasi',
