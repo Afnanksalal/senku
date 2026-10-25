@@ -4,9 +4,16 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 const { chromium, expect } = require('@playwright/test');
 const origin = new URL(process.env.SENKU_TEST_URL || 'http://localhost:3000').origin;
+const publicOrigin = new URL(origin).protocol === 'https:' && !/^(localhost|127\.|0\.0\.0\.0$|\[?::1\]?$)/i.test(new URL(origin).hostname);
 const evidence = path.resolve('artifacts/ci/browser');
 let checks = 0;
 function check(value, message) { assert(value, message); checks++; }
+function headAttribute(head, tag, selector, value, attribute) {
+  for (const match of head.matchAll(new RegExp(`<${tag}\\b[^>]*>`, 'gi'))) {
+    const attributes = Object.fromEntries([...match[0].matchAll(/([\w:-]+)=["']([^"']*)["']/g)].map(item => [item[1].toLowerCase(), item[2].replace(/&amp;/g, '&')]));
+    if (attributes[selector] === value) return attributes[attribute];
+  }
+}
 async function get(url, options) { const response = await fetch(origin + url, options); check(response.ok, `${url} returned ${response.status}`); return response; }
 (async () => {
   await fs.mkdir(evidence, { recursive: true });
@@ -69,12 +76,32 @@ async function get(url, options) { const response = await fetch(origin + url, op
       const head = html.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] || '';
       check(/property="og:image"/.test(head) && /name="twitter:card"/.test(head), `${agent} receives initial-HTML share metadata`);
       check(head.includes('/social/senku-og.png'), `${agent} receives the generated raster preview`);
+      check(!/Gemini|Google|AI-powered|AI-guided/.test(head.replace(/<meta\b[^>]*name="googlebot"[^>]*>/gi, '')), `${agent} receives Senku-branded metadata`);
+      if (publicOrigin) {
+        check(headAttribute(head, 'link', 'rel', 'canonical', 'href') === `${origin}/welcome`, `${agent} receives the deployed canonical URL`);
+        check(headAttribute(head, 'meta', 'property', 'og:url', 'content') === `${origin}/welcome`, `${agent} receives the deployed social URL`);
+        check(headAttribute(head, 'meta', 'property', 'og:image', 'content') === `${origin}/social/senku-og.png`, `${agent} receives an absolute HTTPS preview image`);
+        check(headAttribute(head, 'meta', 'name', 'twitter:image', 'content') === `${origin}/social/senku-og.png`, `${agent} receives an absolute HTTPS card image`);
+        check(!/noindex/.test(headAttribute(head, 'meta', 'name', 'robots', 'content') || ''), 'The public welcome page can be indexed');
+      }
     }
     const privateHtml = await (await get('/profile?ci-private-sentinel=1')).text();
     const privateHead = privateHtml.match(/<head[^>]*>([\s\S]*?)<\/head>/i)?.[1] || '';
     check(/noindex/.test(privateHead) && !privateHead.includes('ci-private-sentinel'), 'Private metadata stays unindexed and excludes query data');
     if (/^(localhost|127\.)/.test(new URL(origin).hostname)) {
       check((await (await get('/robots.txt')).text()).includes('Disallow: /'), 'Development origin is not indexable');
+    } else if (publicOrigin) {
+      const robots = await (await get('/robots.txt')).text();
+      check(/^Allow: \/\s*$/m.test(robots) && !/^Disallow: \/\s*$/m.test(robots), 'The public origin permits catalog indexing');
+      for (const privatePath of ['/backend/', '/api/', '/home', '/profile', '/rooms', '/shared', '/classroom', '/companion', '/pathways', '/offline']) {
+        check(robots.split(/\r?\n/).includes(`Disallow: ${privatePath}`), `Robots excludes private ${privatePath}`);
+      }
+      check(robots.includes(`Sitemap: ${origin}/sitemap.xml`), 'Robots advertises the deployed HTTPS sitemap');
+      const sitemap = await (await get('/sitemap.xml')).text();
+      const locations = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => new URL(match[1]));
+      check(locations.length > 0 && locations.every(url => url.origin === origin && !url.search), 'Every sitemap location uses the deployed public origin without private query data');
+      check(locations.some(url => url.pathname === '/molecules') && locations.some(url => url.pathname === '/welcome'), 'The sitemap includes both the studio and welcome page');
+      check(!locations.some(url => /^\/(?:home|profile|rooms|shared|classroom|companion|pathways|offline)(?:\/|$)/.test(url.pathname)), 'The sitemap excludes private workspaces');
     }
     const worker = await get('/sw.js');
     check(/no-cache|no-store/.test(worker.headers.get('cache-control') || ''), 'Worker updates are not served as immutable assets');
@@ -92,7 +119,7 @@ async function get(url, options) { const response = await fetch(origin + url, op
     check(errors.length === 0, `Browser exceptions: ${errors.join('; ')}`);
     check(unavailable.length === 0, `Unavailable API requests: ${unavailable.join('; ')}`);
     check(chargedRequests.length === 0, 'Guest browser smoke creates no paid operations');
-    const report = { checks, routes: routes.length, viewportWidths: [320, 375, 768, 1440], chargedRequests, errors, unavailable };
+    const report = { checks, origin, publicOrigin, routes: routes.length, viewportWidths: [320, 375, 768, 1440], chargedRequests, errors, unavailable };
     await fs.writeFile(path.join(evidence, 'report.json'), JSON.stringify(report, null, 2) + '\n');
     console.log(JSON.stringify(report));
   } catch(error) {
