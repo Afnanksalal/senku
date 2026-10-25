@@ -1,0 +1,13 @@
+{$SENKU_HOST} {
+	encode zstd gzip
+	header {
+		Strict-Transport-Security "max-age=31536000"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	reverse_proxy senku-gateway:8080 {
+		# Overwrite incoming values: only this ingress may supply the trusted client IP.
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto https
+	}
+}

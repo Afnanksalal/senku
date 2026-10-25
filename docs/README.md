@@ -43,6 +43,7 @@ Current explicit user requirements take precedence over conflicting source sugge
 - [Frontend behavior contract](frontend/FRONTEND_CONTRACT.md)
 - [Testing and acceptance](quality.md)
 - [Operations and deployment](operations.md)
+- [Public Docker deployment and verification](deployment.md)
 - [Decision register](decisions.md)
 - [Delivery roadmap](roadmap.md)
 - [Implementation status](status.md)

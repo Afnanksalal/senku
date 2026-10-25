@@ -161,7 +161,7 @@ Node workspace resolution is recorded in `package-lock.json`; each scientific en
 
 ## Deployment and previews
 
-This repository is a working local platform. Public hosting, TLS, backup policy, monitoring and deployment load verification belong to the operator environment. It does not deploy to a VPS automatically.
+Run the same stack on a Linux server with the [public deployment guide](docs/deployment.md) and `compose.production.yaml`. The override adds a dedicated HTTPS ingress, explicit production startup gates and persistent certificate storage. Backups, monitoring and deployment load verification belong to the operator environment. GitHub CI does not deploy to a VPS automatically.
 
 Set `SENKU_SITE_URL` to the real public HTTPS origin before building the web image. Local or missing origins stay unindexed. Public pages include canonical metadata and generated raster share images; private pages use `noindex` and generic previews. Discord, WhatsApp, Facebook and X must be able to fetch the deployed HTML and images without authentication. Localhost previews cannot be scraped by those services.
 

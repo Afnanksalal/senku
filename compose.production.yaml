@@ -1,0 +1,81 @@
+# Add after compose.yaml (and compose.gemini.yaml when using a read-only ADC mount).
+# Dedicated Senku TLS ingress. Ports 80/443 must be free before starting.
+services:
+  ingress:
+    image: caddy:2.11.2-alpine@sha256:834468128c7696cec0ceea6172f7d692daf645ae51983ca76e39da54a97c570d
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      SENKU_HOST: ${SENKU_HOST:?Set the exact public hostname without scheme}
+    volumes:
+      - ./infra/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks: [app]
+    depends_on:
+      gateway: {condition: service_healthy}
+    read_only: true
+    tmpfs: [/tmp]
+    cap_drop: [ALL]
+    cap_add: [NET_BIND_SERVICE]
+    security_opt: [no-new-privileges:true]
+    logging:
+      driver: json-file
+      options: {max-size: "10m", max-file: "3"}
+  gateway:
+    restart: unless-stopped
+    volumes:
+      - ./infra/nginx.production.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      app:
+        aliases: [senku-gateway]
+  web:
+    restart: unless-stopped
+    build:
+      args:
+        SENKU_SITE_URL: ${SENKU_SITE_URL:?Set the exact public HTTPS origin}
+    environment:
+      SENKU_SITE_URL: ${SENKU_SITE_URL:?Set the exact public HTTPS origin}
+  api:
+    restart: unless-stopped
+    environment: &production-backend
+      NODE_ENV: production
+      AUTO_MIGRATE: "false"
+      S3_CREATE_BUCKET: "false"
+      CORS_ORIGINS: ${SENKU_SITE_URL:?Set the exact public HTTPS origin}
+      TRUST_PROXY: "true"
+      API_DOCS: "false"
+      DB_POOL_SIZE: ${DB_POOL_SIZE:-5}
+      SCIENCE_CONCURRENCY: ${SCIENCE_CONCURRENCY:-2}
+      GLOBAL_DAILY_UNITS: ${GLOBAL_DAILY_UNITS:-1000}
+  jobs:
+    environment: *production-backend
+  postgres:
+    restart: unless-stopped
+  redis:
+    restart: unless-stopped
+  minio:
+    restart: unless-stopped
+  molecule-editor:
+    restart: unless-stopped
+  numerics:
+    restart: unless-stopped
+  vina:
+    restart: unless-stopped
+  rdkit:
+    restart: unless-stopped
+  cobrapy:
+    restart: unless-stopped
+  roadrunner:
+    restart: unless-stopped
+  tellurium:
+    restart: unless-stopped
+  biosimulators:
+    restart: unless-stopped
+  copasi:
+    restart: unless-stopped
+  physicell:
+    restart: unless-stopped
+volumes:
+  caddy-data: {}
+  caddy-config: {}

@@ -1,6 +1,6 @@
 # Verification and acceptance
 
-Source: masterplan sections 16-18, 24-25, 29-30. No checks in this document have yet been executed against a product.
+Source: masterplan sections 16-18, 24-25, 29-30. The integrated product now has executable contract, isolated API/data, native-science, real-worker and browser suites. [status.md](status.md) records actual execution evidence; [backend-coverage.md](backend-coverage.md) distinguishes implemented behavior from remaining certification. The table below remains an acceptance framework, not a claim that every device, scientific model or production condition has been validated.
 
 | Area | Required evidence |
 |---|---|
@@ -23,6 +23,6 @@ Complete a mission; open its exact model in Lab; run and compare two parameter s
 
 Distinguish planned, implemented, tested, and validated. A UI smoke test does not validate a scientific model. A build pass does not verify runtime worker isolation. Mark demonstrations/mockups/precomputed samples clearly. Unavailable optional engines must remain visibly unavailable or offer an explicitly labeled educational model. Do not claim unlimited compute or offline execution of remote engines.
 
-## Evidence format (proposed)
+## Evidence format
 
-For each release check record requirement, version/commit, environment/device, input/seed, expected result and tolerance, observed result, artifact/log reference, pass/fail, and remaining limitation. Define runnable scripts with the implementation rather than documenting imaginary commands now.
+For each release check record requirement, version/commit, environment/device, input/seed, expected result and tolerance, observed result, artifact/log reference, pass/fail, and remaining limitation. Runnable checks include `scripts/test-backend.ps1`, `scripts/verify-web.cjs`, `scripts/check-production.cjs`, the API integration/native-worker suites and the isolated drawing editor tests. CI runs its declared commands against a fresh checkout; public deployment, configured live provider calls, physical-device performance and scientific validity require their own evidence.

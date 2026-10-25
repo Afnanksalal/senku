@@ -44,6 +44,8 @@ jobs:
       - name: Build every workspace from the clean checkout
         run: npm run build
       - run: npm run typecheck
+      - name: Check production ingress and runtime boundaries
+        run: node scripts/check-production.cjs
       - name: Check molecular parser, coordinate display and request keys
         run: node apps/web/tests/docking.contract.cjs
       - name: Check molecular collections and batch UI contracts
