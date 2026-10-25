@@ -1,0 +1,42 @@
+name: Public deployment verification
+on:
+  workflow_dispatch:
+    inputs:
+      origin:
+        description: Exact deployed HTTPS origin
+        required: true
+        default: https://senku.18.61.174.6.sslip.io
+permissions:
+  contents: read
+jobs:
+  public-browser:
+    name: Public HTTPS, metadata, PWA and molecular drawing
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      SENKU_TEST_URL: ${{ inputs.origin }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Validate explicit HTTPS origin
+        run: node -e "const value=process.env.SENKU_TEST_URL,url=new URL(value);if(url.protocol!=='https:'||url.origin!==value||url.username||url.password)throw Error('An exact HTTPS origin is required')"
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: Verify public pages, crawler previews and offline shell
+        run: node scripts/verify-web.cjs
+      - name: Verify actual public molecular drawing
+        run: node services/molecule-editor/tests/browser.cjs
+      - name: Verify drawing lifecycle and navigation cleanup
+        run: node services/molecule-editor/tests/navigation.cjs
+      - name: Upload browser evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: public-deployment-browser
+          path: artifacts/ci/
+          if-no-files-found: error
