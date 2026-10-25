@@ -70,12 +70,13 @@ def molecule(job):
     if not isinstance(smiles,str) or not 0<len(smiles)<=256: raise ValueError()
     mol=Chem.MolFromSmiles(smiles)
     if mol is None or mol.GetNumHeavyAtoms()>80 or len(Chem.GetMolFrags(mol))!=1 or any(a.GetAtomicNum() not in (1,6,7,8,9,15,16,17) for a in mol.GetAtoms()): raise ValueError()
+    chemistry={'heavy_atom_count':mol.GetNumHeavyAtoms(),'rotatable_bonds':rdMolDescriptors.CalcNumRotatableBonds(mol),'formal_charge':Chem.GetFormalCharge(mol),'radical_electrons':sum(a.GetNumRadicalElectrons() for a in mol.GetAtoms())}
     data={'canonical_smiles':Chem.MolToSmiles(mol),'formula':rdMolDescriptors.CalcMolFormula(mol)}
     if p.get('generate_3d')=='yes':
         mol=Chem.AddHs(mol);params=AllChem.ETKDGv3();params.randomSeed=job['seed'];params.maxIterations=200
         if AllChem.EmbedMolecule(mol,params)!=0: raise ValueError()
         data['molblock']=Chem.MolToMolBlock(mol)
-    return output(job,{'molecular_weight':Descriptors.MolWt(mol),'hydrogen_bond_donors':Descriptors.NumHDonors(mol),'hydrogen_bond_acceptors':Descriptors.NumHAcceptors(mol)},{'molecular_weight':'g/mol','hydrogen_bond_donors':'count','hydrogen_bond_acceptors':'count'},molecule=data,diagnostics={'conformer':'ETKDGv3' if 'molblock' in data else 'none','seed':job['seed']})
+    return output(job,{'molecular_weight':Descriptors.MolWt(mol),'hydrogen_bond_donors':Descriptors.NumHDonors(mol),'hydrogen_bond_acceptors':Descriptors.NumHAcceptors(mol)},{'molecular_weight':'g/mol','hydrogen_bond_donors':'count','hydrogen_bond_acceptors':'count'},molecule=data,diagnostics={'conformer':'ETKDGv3' if 'molblock' in data else 'none','seed':job['seed'],**chemistry})
 def metabolic(job):
     from cobra import Model,Reaction,Metabolite
     p=job['parameters'];uptake=n(p,'uptake',0,20);maintenance=n(p,'maintenance',0,10)

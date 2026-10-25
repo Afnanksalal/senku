@@ -37,12 +37,22 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            services/molecule-editor/package-lock.json
       - run: npm ci --no-audit --no-fund
       - name: Build every workspace from the clean checkout
         run: npm run build
       - run: npm run typecheck
       - name: Check molecular parser, coordinate display and request keys
         run: node apps/web/tests/docking.contract.cjs
+      - name: Check molecular collections and batch UI contracts
+        run: node apps/web/tests/molecular-workspace.contract.cjs
+      - name: Install and verify the isolated drawing editor
+        run: |
+          npm ci --prefix services/molecule-editor --no-audit --no-fund
+          npm run build --prefix services/molecule-editor
+          npm test --prefix services/molecule-editor
       - run: npm audit --audit-level=moderate
       - name: Audit the isolated molecule editor lock
         run: npm audit --prefix services/molecule-editor --audit-level=moderate
@@ -64,6 +74,9 @@ jobs:
         with:
           node-version: '24'
           cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            services/molecule-editor/package-lock.json
       - name: Generate ephemeral test credentials
         run: |
           $taskText=Get-Content .env.example -Raw
@@ -77,7 +90,7 @@ jobs:
         run: ./scripts/test-backend.ps1
       - name: Start the real app for browser verification
         run: |
-          docker compose up -d --no-build --wait --wait-timeout 180 api jobs web gateway
+          docker compose up -d --no-build --wait --wait-timeout 180 api jobs web molecule-editor gateway
           if($LASTEXITCODE -ne 0){throw 'Application did not become ready'}
       - name: Install the locked browser test runtime
         run: |
@@ -87,6 +100,10 @@ jobs:
           if($LASTEXITCODE -ne 0){throw 'Chromium installation failed'}
       - name: Verify responsive pages, metadata and offline shell
         run: node scripts/verify-web.cjs
+      - name: Verify real molecular drawing and the isolated bridge
+        run: node services/molecule-editor/tests/browser.cjs
+      - name: Verify drawing startup and navigation cleanup
+        run: node services/molecule-editor/tests/navigation.cjs
       - name: Capture service diagnostics on failure
         if: failure()
         run: |
@@ -98,7 +115,9 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: browser-verification
-          path: artifacts/ci/browser/
+          path: |
+            artifacts/ci/browser/
+            artifacts/ci/editor/
           if-no-files-found: ignore
           retention-days: 7
       - name: Stop ephemeral infrastructure

@@ -336,12 +336,10 @@ services:
       retries: 5
       start_period: 60s
   molecule-editor:
-    profiles: [science]
     build:
       context: .
       dockerfile: services/molecule-editor/Dockerfile
-    environment: {SCIENCE_TOKEN: "${SCIENCE_TOKEN:?Run scripts/setup.ps1}"}
-    networks: [compute]
+    networks: [app]
     read_only: true
     tmpfs: [/tmp]
     cap_drop: [ALL]

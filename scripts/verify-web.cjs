@@ -14,12 +14,12 @@ async function get(url, options) { const response = await fetch(origin + url, op
   const context = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1440, height: 1000 } });
   const page = await context.newPage();
   const errors = [], unavailable = [], chargedRequests = [];
-  page.on('request', request => { if(request.method()==='POST' && /\/v1\/(runs|companion\/respond|ai\/route|investigations)$/.test(new URL(request.url()).pathname)) chargedRequests.push(new URL(request.url()).pathname); });
+  page.on('request', request => { if(request.method()==='POST' && /\/v1\/(runs|molecules\/(?:validate|describe)|companion\/respond|ai\/route|investigations|molecular\/screens(?:\/[0-9a-f-]+\/reflect)?)$/.test(new URL(request.url()).pathname)) chargedRequests.push(new URL(request.url()).pathname); });
   page.on('pageerror', error => errors.push(error.message));
   page.on('response', response => { if (response.url().startsWith(origin + '/backend/') && (response.status() >= 500 || response.status() === 429)) unavailable.push(`${response.status()} ${new URL(response.url()).pathname}`); });
   try {
     check((await (await get('/backend/health')).json()).status === 'ok', 'The gateway reaches the actual API');
-    const routes = ['/welcome', '/home', '/docking', '/learn', '/challenges', '/discover', '/profile'];
+    const routes = ['/welcome', '/home', '/docking', '/molecules', '/learn', '/challenges', '/discover', '/profile'];
     for (const route of routes) {
       const response = await page.goto(origin + route, { waitUntil: 'domcontentloaded' });
       check(response?.status() === 200, `${route} serves HTML`);
@@ -31,7 +31,7 @@ async function get(url, options) { const response = await fetch(origin + url, op
         check(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `${route} fits ${width}px`);
         await page.screenshot({ path: path.join(evidence, `${route.slice(1)}-${width}.png`) });
       }
-      if (['/home', '/docking'].includes(route)) {
+      if (['/home', '/docking', '/molecules'].includes(route)) {
         for (const width of [320, 375, 768]) {
           await page.setViewportSize({ width, height: 1000 });
           await page.evaluate(() => document.documentElement.style.fontSize = '200%');
@@ -39,7 +39,7 @@ async function get(url, options) { const response = await fetch(origin + url, op
         }
         await page.evaluate(() => document.documentElement.style.fontSize = '');
       }
-      if (['/welcome', '/home', '/docking'].includes(route)) {
+      if (['/welcome', '/home', '/docking', '/molecules'].includes(route)) {
         check(!/Gemini|Google|AI-powered|AI-guided/.test(await page.locator('body').innerText()), `${route} uses Senku product copy`);
       }
     }

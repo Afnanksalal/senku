@@ -8,4 +8,4 @@ MinIO upstream image pulls were unavailable; its local image builds source at co
 
 Dependency audit remediation: require multer 2.5.0, grpc-js 1.14.6, CommonJS-compatible uuid 11.1.1, and esbuild 0.25.12 specifically under the legacy Drizzle loader. Verify the resolved graph and builds after installation; do not use forced audit downgrades.
 
-Ketcher is isolated in services/molecule-editor with React 18 because miew-react still requires it. Main web/R3F uses React 19. A separate browser document and validated messaging will be required for integration; do not mount the two React versions together.
+Ketcher is isolated in services/molecule-editor with React 18 because miew-react still requires it. Main web/R3F uses React 19. A working separate browser document at `/editor/` and a bounded same-origin message protocol now integrate it with `/molecules`; do not mount the two React versions together.

@@ -33,3 +33,6 @@ Dependency pins and hashes are in `services/workers/docking/requirements.lock`; 
 Docking source/worker verification: run `./scripts/verify-docking.ps1` against the running isolated service. It performs real reference-ligand searches for both approved structures, deterministic replay, coordinate comparison, input/authorization rejection, cancellation and deadline checks. These are teaching/reference checks, not empirical affinity validation.
 
 Docking has a60-second worker deadline and65-second API transport allowance. Other engine timeouts are unchanged. Its process virtual-address bound is1.5GiB to accommodate mapped scientific libraries; actual container memory remains capped at1GiB, CPU at1core, with CPU/file/process/descriptor limits retained. The old768MiB virtual bound caused severe search slowdown and was replaced only for this engine after measurement.
+
+
+For actual drawing, saved compounds and independent batch comparisons, use the [molecule studio](molecular-workspace.md). The single-search interface remains available.

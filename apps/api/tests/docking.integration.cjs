@@ -22,7 +22,7 @@ const {scienceOutput}=require(path.join(dist,'science/science.client'));
 const {CompanionController}=require(path.join(dist,'companion/companion.controller'));
 const schema=process.env.DB_SCHEMA;
 if(!/^senku_test_docking_[a-f0-9]{16}$/.test(schema||'')||process.env.QUEUE_PREFIX!==schema||process.env.S3_BUCKET!==schema.replaceAll('_','-'))throw Error('Refusing docking test outside an explicitly isolated namespace');
-const config=loadConfig({...process.env,NODE_ENV:'test',ENABLE_GEMINI:'false',S3_CREATE_BUCKET:'true',SCIENCE_CONCURRENCY:'1'});
+const config=loadConfig({...process.env,NODE_ENV:'test',ENABLE_GEMINI:'false',S3_CREATE_BUCKET:'true',SCIENCE_CONCURRENCY:'2'});
 const admin=new Pool({connectionString:config.DATABASE_URL}),db=new Database(config),catalog=new CatalogService(db),budget=new BudgetService(db,config),idem=new Idempotency(db),connections=new Connections(config),storage=new StorageService(config),runs=new RunService(db,catalog,budget,idem,connections,storage);
 let checks=0,ownedSchema=false,ownedBucket=false,started=false,calls=0;
 const check=(v,msg)=>{assert(v,msg);checks++};
@@ -33,7 +33,9 @@ async function used(owner){return Number((await db.query("SELECT coalesce(sum(un
 const input=(params={},extra={})=>runRequest.parse({experiment_id:'molecular-docking',parameters:params,...extra});
 const mismatch=new Set(),failure=new Set();
 function fixture(request){const hash='a'.repeat(64);return scienceOutput.parse({engine_id:'vina',engine_version:'explicit-test-substitute',adapter_version:'1.0.0',model_id:'molecular-docking',scientific_status:'illustrative_educational',scalars:{best_score_kcal_mol:-5,pose_count:1},units:{best_score_kcal_mol:'kcal/mol',pose_count:'poses'},diagnostics:{test_substitute:true},warnings:['Contract fixture only; these are not calculated docking scores.'],docking:{target:{id:'trypsin',name:'Trypsin',pdb_id:'3PTB',source_url:'https://www.rcsb.org/structure/3PTB',organism:'Bos taurus',reference_ligand:'Benzamidine',reference_smiles:'NC(=N)c1ccccc1'},protein_pdb:'ATOM',reference_ligand_pdb:'HETATM',box:{center:[0,1,2],size:[18,18,18]},binding_site_residues:[{chain:'A',residue_name:'ASP',residue_number:189,distance_angstrom:3.2}],poses:[{rank:1,score_kcal_mol:-5,pdbqt:'ATOM',pdb:'ATOM'}],limitations:['Scores are estimates, not measured binding strengths.','The protein is rigid.'],provenance:{source_pdb_sha256:hash,receptor_pdbqt_sha256:hash,preparation_sha256:hash,ligand_pdbqt_sha256:hash,seed:request.seed,cpu:1,scoring_function:'vina'}}})}
-const science={execute:async(engine,request)=>{calls++;check(engine==='vina'&&request.model_id==='molecular-docking','Approved worker identity');check(request.seed===request.parameters.seed,'Seed continuity across compute boundary');if(failure.has(request.job_id))throw Error('invalid_input');const output=fixture(request);if(mismatch.has(request.job_id))output.docking.provenance.seed=request.seed+1;return output},cancel:async()=>{}};
+let activeComputations=0,peakComputations=0,holdFirst;const executedIds=new Set();
+const heldSearch=new Promise(resolve=>{holdFirst=resolve});
+const science={execute:async(engine,request)=>{calls++;executedIds.add(request.job_id);activeComputations++;peakComputations=Math.max(peakComputations,activeComputations);try{check(engine==='vina'&&request.model_id==='molecular-docking','Approved worker identity');check(request.seed===request.parameters.seed,'Seed continuity across compute boundary');if(request.seed===201)await heldSearch;await new Promise(r=>setTimeout(r,75));if(failure.has(request.job_id))throw Error('invalid_input');const output=fixture(request);if(mismatch.has(request.job_id))output.docking.provenance.seed=request.seed+1;return output}finally{activeComputations--}},cancel:async()=>{}};
 const runtime=new JobRuntime(db,connections,budget,science,storage,{process:async()=>{throw Error('Unexpected investigation')}},{cleanup:async()=>{}},config);
 async function wait(owner,id){for(let i=0;i<200;i++){const run=await runs.get(owner,id);if(['completed','failed','cancelled','timed_out'].includes(run.status))return run;await new Promise(r=>setTimeout(r,75))}throw Error('Docking lifecycle timeout')}
 (async()=>{try{
@@ -74,8 +76,28 @@ async function wait(owner,id){for(let i=0;i<200;i++){const run=await runs.get(ow
  const mismatchRun=await wait(owner,bad.id);check(mismatchRun.status==='failed'&&mismatchRun.error_code==='invalid_output','Wrong output seed rejected');check((await runs.artifacts(owner,bad.id)).length===0,'Wrong output never retained');
  const invalidRun=await wait(owner,failed.id);check(invalidRun.status==='failed'&&invalidRun.error_code==='invalid_input','Compute input failure persists honestly');check((await db.query('SELECT state FROM usage_reservations WHERE id=$1',[failed.id]))[0].state==='consumed','Started invalid compute cannot farm free retries');
  check((await runs.get(owner,queued.id)).status==='cancelled','Queue cannot revive cancelled work');check((await db.query("SELECT type FROM durable_events WHERE resource_id=$1 ORDER BY sequence",[id])).map(x=>x.type).join(',')==='run.queued,run.running,run.completed','Durable ordered lifecycle events');
+ // Two queue processors share the one physical docking slot. A waiting member stays
+ // queued/reserved and can be cancelled without any simulated computation or charge.
+ const held=await runs.create(owner,randomUUID(),input({seed:201}));
+ for(let i=0;i<100;i++){if((await runs.get(owner,held.id)).status==='running')break;await new Promise(r=>setTimeout(r,50))}
+ check((await runs.get(owner,held.id)).status==='running','First search holds the engine slot');
+ const waiting=await runs.create(owner,randomUUID(),input({seed:202}));
+ for(let i=0;i<100;i++){const queuedJob=await runtime.queue.getJob(waiting.id);if(queuedJob&&await queuedJob.getState()==='active')break;await new Promise(r=>setTimeout(r,50))}
+ check((await runs.get(owner,waiting.id)).status==='queued','Second processor waits without claiming compute');
+ check((await db.query('SELECT state FROM usage_reservations WHERE id=$1',[waiting.id]))[0].state==='reserved','Engine wait does not consume reservation');
+ check(!executedIds.has(waiting.id),'Waiting search never reaches busy worker');
+ await runs.cancel(owner,waiting.id);check((await db.query('SELECT state FROM usage_reservations WHERE id=$1',[waiting.id]))[0].state==='released','Waiting search cancellation releases its reservation');
+ holdFirst();check((await wait(owner,held.id)).status==='completed','Held search completes after release');
+ const parallel=await Promise.all([203,204,205].map(seed=>runs.create(owner,randomUUID(),input({seed}))));
+ const outcomes=await Promise.all(parallel.map(r=>wait(owner,r.id)));
+ check(outcomes.every(r=>r.status==='completed'),'Multiple admitted searches complete through one engine slot');
+ check(peakComputations===1,'Distributed gate permits only one docking computation');
+ check(!executedIds.has(waiting.id),'Cancelled waiting search is never computed');
+ for(let i=0;i<50&&await connections.redis.get(connections.key('engine-slot:vina'));i++)await new Promise(r=>setTimeout(r,25));
+ check(await connections.redis.get(connections.key('engine-slot:vina'))===null,'Engine lease is released after completed work');
  console.log(JSON.stringify({docking_integration:'passed',checks,real:['PostgreSQL migrations/catalog/transactions','Redis and BullMQ dispatch','private object-store artifacts'],compute:'explicit deterministic substitute; no scientific validation',calls}));
 }finally{
+ holdFirst?.();
  if(started)await runtime.stop();
  // Remove only keys and objects inside the exact checked disposable namespace.
  assert(/^senku_test_docking_[a-f0-9]{16}$/.test(schema));

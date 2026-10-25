@@ -11,6 +11,7 @@ import s from './AppHeader.module.css';
 const primary = [['/home','Home','home'],['/learn','Learn','book'],['/challenges','Play','spark'],['/discover','Research','search'],['/profile','Profile','person']] as const;
 const tools = [
   ['/','Explore','Find your next experiment','search'], ['/lab','Lab','Change a parameter. See what happens.','flask'],
+  ['/molecules','Molecule studio','Draw molecules and compare a collection','flask'],
   ['/docking','Molecule docking','Discover how molecules fit a protein','flask'],
   ['/pathways','Pathways','Build a biological network','compare'], ['/companion','Ask Senku','Talk through a scientific question','spark'],
   ['/rooms','Shared labs','Experiment with someone else','person'], ['/classroom','Classroom','Assignments and learning together','book'],

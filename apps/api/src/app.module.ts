@@ -1,3 +1,5 @@
+import { MolecularService } from './molecules/molecular.service';
+import { MolecularController } from './molecules/molecular.controller';
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { CONFIG, loadConfig } from './config';
@@ -41,6 +43,7 @@ import { AiIntentController, AiIntentService } from './learning/ai-intent.servic
 
 @Module({
   controllers: [
+    MolecularController,
     HealthController,
     AuthController,
     CatalogController,
@@ -62,6 +65,7 @@ import { AiIntentController, AiIntentService } from './learning/ai-intent.servic
     DomainController,
   ],
   providers: [
+    MolecularService,
     { provide: CONFIG, useFactory: () => loadConfig() },
     Database,
     Connections,

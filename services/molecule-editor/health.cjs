@@ -1,8 +1,12 @@
-const http = require('node:http');
-require.resolve('ketcher-react');
-require.resolve('ketcher-standalone');
-http.createServer((req,res) => {
-  if(req.url !== '/health') { res.writeHead(404); return res.end(); }
-  res.setHeader('Content-Type','application/json');
-  res.end(JSON.stringify({status:'ok',service:'molecule-editor-dependencies',editor_available:false}));
+const http=require('node:http'),fs=require('node:fs'),path=require('node:path'),zlib=require('node:zlib');
+const root=path.resolve(__dirname,'dist'),types={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.wasm':'application/wasm','.svg':'image/svg+xml','.png':'image/png','.woff2':'font/woff2','.woff':'font/woff','.json':'application/json; charset=utf-8','.txt':'text/plain; charset=utf-8'};
+http.createServer((req,res)=>{
+ res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
+ if(req.url==='/health'){const ready=fs.existsSync(path.join(root,'index.html'));res.statusCode=ready?200:503;res.setHeader('Content-Type','application/json');return res.end(JSON.stringify({status:ready?'ok':'unavailable',service:'molecule-editor',editor_available:ready}))}
+ if(!['GET','HEAD'].includes(req.method)){res.writeHead(405);return res.end()}
+ let url;try{url=new URL(req.url,'http://editor');}catch{res.writeHead(400);return res.end()}
+ let relative;try{relative=decodeURIComponent(url.pathname).replace(/^\/editor\/?/,'');}catch{res.writeHead(400);return res.end()}
+ if(relative.includes(String.fromCharCode(0))||relative.length>2048){res.writeHead(400);return res.end()}if(!relative)relative='index.html';const file=path.resolve(root,relative);
+ if(file!==root&&!file.startsWith(root+path.sep)){res.writeHead(404);return res.end()}
+ fs.stat(file,(error,stat)=>{if(error||!stat.isFile()){res.writeHead(404);return res.end()}res.setHeader('Content-Type',types[path.extname(file)]||'application/octet-stream');if(/\.(js|css|html)$/.test(file))res.setHeader('Vary','Accept-Encoding');res.setHeader('Cache-Control',relative==='index.html'?'no-cache':'public,max-age=3600');if(relative==='index.html')res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self' 'wasm-unsafe-eval' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; worker-src 'self' blob:; connect-src 'self'; frame-ancestors 'self'; object-src 'none'; base-uri 'none'; form-action 'none'");if(req.method==='HEAD')return res.end();const stream=fs.createReadStream(file);stream.on('error',()=>res.destroy());if(/gzip/.test(req.headers['accept-encoding']||'')&&/\.(js|css|html)$/.test(file)){res.setHeader('Content-Encoding','gzip');stream.pipe(zlib.createGzip()).pipe(res)}else stream.pipe(res)})
 }).listen(8080,'0.0.0.0');

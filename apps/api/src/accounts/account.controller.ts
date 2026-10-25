@@ -138,6 +138,10 @@ export class AccountController {
       'dynamic_challenge_feedback',
       'personalized_missions',
       'ai_intents',
+      'molecular_collections',
+      'molecular_compounds',
+      'molecular_screens',
+      'molecular_screen_members',
     ];
     const records: Record<string, unknown> = {};
     for (const table of tables)
@@ -188,6 +192,8 @@ export class AccountController {
       await tx.query('DELETE FROM dynamic_challenges WHERE owner_id=$1', [id]);
       await tx.query('DELETE FROM personalized_missions WHERE owner_id=$1', [id]);
       await tx.query('DELETE FROM ai_intents WHERE owner_id=$1', [id]);
+      await tx.query('DELETE FROM molecular_screens WHERE owner_id=$1', [id]);
+      await tx.query('DELETE FROM molecular_collections WHERE owner_id=$1', [id]);
       await tx.query(
         "UPDATE experiment_runs SET cancel_requested_at=coalesce(cancel_requested_at,now()) WHERE owner_id=$1 AND status IN ('queued','running')",
         [id],

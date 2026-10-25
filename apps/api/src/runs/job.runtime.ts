@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { Queue, Worker, Job } from 'bullmq';
 import Redis from 'ioredis';
+import { randomUUID } from 'node:crypto';
 import { Database, rows } from '../database/database';
 import { CONFIG, Config } from '../config';
 import { Connections, event } from '../common/events';
@@ -192,6 +193,30 @@ export class JobRuntime {
     });
   }
   private async run(job: Job) {
+    const id = String(job.id);
+    const initial = (await this.db.query<RunRow>('SELECT * FROM experiment_runs WHERE id=$1', [id]))[0];
+    if (!initial || terminal.has(initial.status)) return;
+    if (initial.engine_id !== 'vina') return this.executeRun(job);
+    // The physical docking worker has one slot. Keep waiting jobs queued and unconsumed
+    // rather than spending their retry allowance on worker-busy responses.
+    const key = this.connections.key('engine-slot:vina'), token = randomUUID();
+    for (;;) {
+      if (await this.connections.redis.set(key, token, 'PX', 120000, 'NX')) break;
+      const current = (await this.db.query<RunRow>('SELECT * FROM experiment_runs WHERE id=$1', [id]))[0];
+      if (!current || terminal.has(current.status)) return;
+      if (current.cancel_requested_at || Date.now() - current.created_at.getTime() > 900000)
+        return this.executeRun(job);
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    try { return await this.executeRun(job); }
+    finally {
+      await this.connections.redis.eval(
+        "if redis.call('get',KEYS[1])==ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end",
+        1, key, token,
+      ).catch(() => console.error(JSON.stringify({level:'warn',event:'engine.lease_release_deferred'})));
+    }
+  }
+  private async executeRun(job: Job) {
     const id = String(job.id);
     const run = await this.db.transaction(async (tx) => {
       const row = (

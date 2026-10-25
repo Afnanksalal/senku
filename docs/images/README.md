@@ -10,3 +10,5 @@ These are browser screenshots of the running local application, captured on 2026
 | mobile.png | `/home` | 375 × 812 | Guest home and mobile navigation |
 
 The taller docking capture includes its complete setup and sign-in action. It does not depict a completed docking run. No provider or scientific-compute requests were made for these screenshots. Browser chrome, authentication credentials and private learner data are excluded. Existing app artwork is visible as rendered; see the repository license and third-party notices for asset boundaries.
+
+`molecule-studio.png` was added on 2026-10-25 from the real guest `/molecules` page at 1440 × 1000. It shows an actual CCO drawing loaded and exported by the drawing engine. No account, saved private collection or computed docking result is shown. The screenshot is not a model mockup or a generated interface.

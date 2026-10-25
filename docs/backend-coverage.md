@@ -44,3 +44,8 @@ All current models are labeled `illustrative_educational`. Native outputs preser
 Configured local provider requests have been exercised; another clone still needs its own project, permissions, model access and budget admission. No repository command automatically provisions those resources. Public TLS, deployment identities, representative load, monitoring, backup retention policy and physical-device/accessibility certification remain operator work.
 
 The molecule-editor dependency environment is installed separately; it is not advertised as a completed integrated editor. Public community/remix discovery and a fully reviewed teacher platform remain outside the current learner-focused delivery. The archived masterplan is retained as source material rather than relabeled as completed work.
+
+
+## Molecular workspace extension
+
+Private compound collections, owned validation evidence, atomic matrices up to 8 pairs, snapshots, cancellation, account export/deletion and screen interpretation are implemented. The drawing document is now integrated at `/editor/` through `/molecules`. See [the workspace guide](molecular-workspace.md) for limits and actual verification.

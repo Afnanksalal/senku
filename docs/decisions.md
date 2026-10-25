@@ -81,3 +81,7 @@ Generation and post-test explanations use real compute admission and persistent 
 
 ## Bounded teaching docking
 User approved an isolated docking experiment with curated nonpathogen/nontoxin proteins, fixed known binding sites, size-limited ligands and reproducible controls. It reuses the existing run/quota/provenance stack. A dedicated Molecular Match surface handles pose/reference comparison; the generic Learn route does not invent a docking lesson. Numeric outputs remain solver-produced; Senku interprets compact saved facts. See docking.md for method, limits and verification boundaries.
+
+## Molecular collections and comparison
+
+The `/molecules` workspace adds real drawing/import/export, validated owner-private compound collections and bounded independent docking matrices. It reuses the existing scientific run lifecycle and approved binding sites rather than executing generated workflows. Collections and historical search snapshots have separate lifecycles. A Redis-backed docking-slot lease keeps queued batch members unconsumed and cancellable until computation can start; it does not serialize unrelated engines. One screen-level interpretation uses actual retained facts and a separate displayed unit. See molecular-workspace.md for supported chemistry, costs and evidence boundaries.

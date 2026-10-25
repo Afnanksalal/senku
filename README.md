@@ -21,6 +21,7 @@ Senku turns a question into something you can explore. Follow a personal mission
 - **Follow your curiosity.** Ask a natural question and move into a mission, game, investigation or lab that fits it.
 - **Learn by trying.** Prepare personal missions and fresh challenges, predict an outcome, then test a change against a real model.
 - **See the result.** Explore scientific scenes in 3D, with keyboard controls and 2D alternatives.
+- **Make a molecule your own.** Draw or import structures, keep private compound collections, then compare up to 8 independent molecule/protein searches with linked 3D views.
 - **Find a molecular fit.** Dock a small molecule into one of two curated protein pockets and compare predicted poses with a known crystal structure.
 - **Check the evidence.** Search papers, inspect public structures, and keep investigation claims linked to sources and runs.
 - **Keep going.** Save progress, earn verified XP, set a daily goal, share a private lab, or prepare lessons for offline practice.
@@ -32,11 +33,15 @@ The images below are real application captures. The docking image shows setup be
 ![Senku learning home](docs/images/home.png)
 
 <details>
-<summary>Welcome page, docking setup and mobile layout</summary>
+<summary>Welcome, molecule studio, docking setup and mobile layout</summary>
 
 ### Welcome
 
 ![Senku welcome page](docs/images/welcome.png)
+
+### Molecule studio
+
+![Real molecule drawing in the guest workspace](docs/images/molecule-studio.png)
 
 ### Molecular docking setup
 
@@ -102,6 +107,7 @@ The default clone starts without a cloud provider, so it does not need cloud cre
 | Explore | `/` | Eleven approved experiments |
 | Learn | `/learn` | Personal missions, reflection, mastery and verified rewards |
 | Play | `/challenges` | Four model-driven game worlds with fresh scenarios |
+| Molecule studio | `/molecules` | Real drawing/import, private collections, independent batch searches and linked 3D results |
 | Docking | `/docking` | Curated protein sites, ranked poses and crystal comparison |
 | Lab | `/lab` | Experiments, networks and reproducibility exports |
 | Research | `/discover` | Paper search, structures and evidence-linked investigations |
@@ -145,7 +151,7 @@ apps/web/                    Learner application and scientific visualizations
 apps/api/                    API, jobs, migrations and integration tests
 packages/experiment-schema/  Versioned contracts and device kernels
 services/workers/            Eight simulation adapters plus utility environment
-services/molecule-editor/    Isolated editor dependencies; integration remains separate
+services/molecule-editor/    Isolated drawing document, local molecular engine and validated browser bridge
 infra/                       Container and gateway configuration
 scripts/                     Setup, verification, backup and recovery
 docs/                        Architecture, science, design and operating guides

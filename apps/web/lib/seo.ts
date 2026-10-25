@@ -50,7 +50,7 @@ export const publicGames:Record<string,{name:string;description:string}>={
   'genetics-dominance':{name:'Inheritance Garden',description:'Explore inherited traits through playful genetics challenges and virtual experiments.'},
 };
 export const publicRoutes=[
-  '/', '/welcome','/learn','/lab','/challenges','/discover','/docking',
+  '/', '/welcome','/learn','/lab','/challenges','/discover','/docking','/molecules',
   ...Object.keys(publicExperiments).flatMap(id=>[`/lab/${id}`,`/learn/${id}-mission`]),
   ...Object.keys(publicGames).map(id=>`/challenges/${id}`),
 ];

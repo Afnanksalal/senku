@@ -17,7 +17,7 @@ From the repository root:
 
 `setup.ps1` creates ignored `.env` from `.env.example` when it does not exist, generating four distinct random secrets. It builds and starts the gateway, web, API, jobs, PostgreSQL, Redis and MinIO. Existing `.env` values are preserved; missing execution/signing keys are added.
 
-`science.ps1` builds a Linux dependency-lock helper, preserves committed locks by default, and starts the science profile. Use `-RefreshLocks` only for a deliberate dependency update. It starts eight simulation adapters and the BioSimulators utility environment; installing that utility does not make it a simulator. The separate molecule-editor dependency service is not a completed editor integration.
+`science.ps1` builds a Linux dependency-lock helper, preserves committed locks by default, and starts the science profile. Use `-RefreshLocks` only for a deliberate dependency update. It starts eight simulation adapters and the BioSimulators utility environment; installing that utility does not make it a simulator. The separate molecule-editor service is a working drawing document served through the gateway at `/editor/` and embedded by `/molecules`. It builds with the core stack; its local browser engine needs no external API key.
 
 ## Linux
 

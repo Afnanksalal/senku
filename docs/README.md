@@ -21,6 +21,7 @@ Current explicit user requirements take precedence over conflicting source sugge
 
 ## Topics
 
+- [Molecule studio: drawing, collections and independent comparisons](molecular-workspace.md)
 - [Molecular docking: curated structures, preparation, controls and limits](docking.md)
 
 - [Implemented backend and operating guide](backend.md)

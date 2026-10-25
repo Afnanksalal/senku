@@ -86,6 +86,8 @@ export class MaintenanceService {
           'dynamic_challenges',
           'personalized_missions',
           'ai_intents',
+          'molecular_screens',
+          'molecular_collections',
         ])
           await tx.query(`DELETE FROM ${table} WHERE owner_id=$1`, [id]);
         await tx.query('DELETE FROM durable_events WHERE owner_id=$1', [id]);

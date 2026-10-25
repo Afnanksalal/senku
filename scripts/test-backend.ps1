@@ -5,8 +5,8 @@ Set-Location $taskRoot
 $taskDocker=if($IsWindows){Join-Path $env:LOCALAPPDATA 'Programs/DockerDesktop/resources/bin/docker.exe'}else{'docker'}
 if(-not(Test-Path $taskDocker)){$taskDocker='docker'}
 function Invoke-Docker { & $taskDocker @args; if($LASTEXITCODE -ne 0){throw 'Docker command failed'} }
-$taskServices=@('postgres','redis','minio','numerics','rdkit','cobrapy','roadrunner','tellurium','copasi','physicell','vina','biosimulators')
-if(-not $SkipBuild){Invoke-Docker compose --profile science build minio api jobs web numerics rdkit cobrapy roadrunner tellurium copasi physicell vina biosimulators}
+$taskServices=@('postgres','redis','minio','numerics','rdkit','cobrapy','roadrunner','tellurium','copasi','physicell','vina','biosimulators','molecule-editor')
+if(-not $SkipBuild){Invoke-Docker compose --profile science build minio api jobs web numerics rdkit cobrapy roadrunner tellurium copasi physicell vina biosimulators molecule-editor}
 Invoke-Docker compose --profile science up -d --no-build --wait --wait-timeout 180 @taskServices
 $taskId='senku_test_'+[Guid]::NewGuid().ToString('N')
 $taskApi=$taskId+'_api';$taskJobs=$taskId+'_jobs';$taskBucket=$taskId.Replace('_','-')
@@ -29,15 +29,15 @@ try {
   if($LASTEXITCODE -eq 0){$taskReady=$true;break};Start-Sleep -Seconds 1
  }
  if(-not $taskReady){throw 'API dependencies and worker did not become ready'}
- foreach($taskTest in @('configuration.integration.cjs','provider.integration.cjs','planning.integration.cjs','backend.integration.cjs','concurrency.integration.cjs','domain.integration.cjs','recovery.integration.cjs')){
+ foreach($taskTest in @('configuration.integration.cjs','provider.integration.cjs','planning.integration.cjs','backend.integration.cjs','concurrency.integration.cjs','domain.integration.cjs','molecular-live.integration.cjs','recovery.integration.cjs')){
   Get-Content (Join-Path $taskRoot "apps/api/tests/$taskTest") -Raw | & $taskDocker exec -i $taskApi node -
   if($LASTEXITCODE -ne 0){throw "Failed: $taskTest"}
  }
  Get-Content apps/api/tests/docking.contract.cjs -Raw | & $taskDocker exec -i -e SENKU_TEST_API_DIST=/workspace/apps/api/dist $taskApi node -
  if($LASTEXITCODE -ne 0){throw 'Docking contract checks failed'}
  # Each service-level suite owns and removes a separate fresh database/queue/bucket namespace.
- foreach($taskTest in @('dynamic-learning.integration.cjs','personalized-mission.integration.cjs','ai-intent.integration.cjs','docking.integration.cjs')){
-  $taskKind=if($taskTest -eq 'docking.integration.cjs'){'docking'}else{'dynamic'}
+ foreach($taskTest in @('dynamic-learning.integration.cjs','personalized-mission.integration.cjs','ai-intent.integration.cjs','docking.integration.cjs','molecular.integration.cjs')){
+  $taskKind=if($taskTest -eq 'docking.integration.cjs'){'docking'}elseif($taskTest -eq 'molecular.integration.cjs'){'molecular'}else{'dynamic'}
   $taskNamespace='senku_test_'+$taskKind+'_'+[Guid]::NewGuid().ToString('N').Substring(0,16)
   $taskTestEnvironment=@('-e',"DB_SCHEMA=$taskNamespace",'-e',"QUEUE_PREFIX=$taskNamespace",'-e',"S3_BUCKET=$($taskNamespace.Replace('_','-'))",'-e','SENKU_TEST_API_DIST=/workspace/apps/api/dist')
   Get-Content (Join-Path $taskRoot "apps/api/tests/$taskTest") -Raw | & $taskDocker exec -i @taskTestEnvironment $taskApi node -
