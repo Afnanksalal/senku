@@ -61,6 +61,18 @@ Run the isolated backend/native suite and browser checks before publishing the s
 
 Use temporary test accounts and a dedicated bounded budget, then delete them and disable the budget. Do not alter existing learner accounts or claim untested physical-device, clinical or load certification.
 
+The operator-only public API verifier runs inside the API container and makes its HTTP/WebSocket requests through the configured public HTTPS origin. It requires an explicit acknowledgement and uses actual workers and the connected provider, with a dedicated 40-unit temporary allowance:
+
+```sh
+docker compose -f compose.yaml -f compose.gemini.yaml -f compose.production.yaml exec -T \
+  -e SENKU_PUBLIC_ACCEPTANCE=true -e SENKU_TEST_URL=https://your-exact-hostname.sslip.io \
+  api node scripts/verify-deployment.cjs
+```
+
+Run a failed section independently with `-e SENKU_TEST_SECTIONS=research`, or select a comma-separated list from `core,molecules,ai,research,collaboration`. Each invocation creates and cleans its own test accounts. Successful sections should not be repeated merely to hide a transient failure; record both the failure and subsequent result. Logs exclude authentication tokens and generated private content.
+
+The manual **Public deployment verification** GitHub workflow checks the real public origin from an independent runner. It exercises responsive pages, HTTPS canonical/social metadata, crawler previews, PWA/offline fallback, real molecular drawing and navigation cleanup. It creates no paid operations and receives no VPS or cloud credentials. Review its uploaded browser evidence alongside the normal backend verification workflow. Neither workflow automatically deploys source changes.
+
 ## Updates and recovery
 
 Record the deployed Git SHA, image identities, Compose file list and non-secret public origin. Before updating, take a coordinated private database/artifact backup following [backend.md](backend.md#verification-and-recovery). Never use `down -v` during normal deployment. Keep rollback images and snapshots until the updated app passes its public smoke tests. After service recreation, verify gateway routing; its dynamic Docker resolver should pick up changed upstream addresses.

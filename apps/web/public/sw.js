@@ -1,9 +1,10 @@
 /* Senku explicitly prepared offline lessons. Never cache account, run or AI responses. */
 const CACHE = 'senku-offline-v1';
-const SHELL = 'senku-shell-v3';
+const SHELL = 'senku-shell-v4';
+const MASCOT_ASSETS = ['wave', 'think', 'cheer', 'puzzled'].map(mood => `/art/mascot-${mood}.webp`);
 const META = '/__senku_offline_meta__';
 const MAX_ENTRIES = 400;
-self.addEventListener('install', (event) => event.waitUntil(caches.open(SHELL).then(cache => cache.add('/offline.html'))));
+self.addEventListener('install', (event) => event.waitUntil(caches.open(SHELL).then(cache => cache.addAll(['/offline.html', ...MASCOT_ASSETS]))));
 self.addEventListener('activate', (event) => event.waitUntil((async()=>{for(const name of await caches.keys())if(name.startsWith('senku-shell-')&&name!==SHELL)await caches.delete(name);await self.clients.claim();})()));
 const publicData = (url) => /^\/backend\/v1\/(subjects|lessons(?:\/[a-z0-9-]+)?|experiments(?:\/[a-z0-9-]+\/versions\/\d+\.\d+\.\d+)?|offline\/packs\/[a-z0-9-]+)$/.test(url.pathname);
 const staticAsset = (url) => url.pathname.startsWith('/_next/static/') || url.pathname.startsWith('/art/') || url.pathname.startsWith('/icons/');
@@ -17,7 +18,7 @@ function assetLinks(text) { return [...new Set([...text.matchAll(/["'(](\/_next\
 async function cacheLesson(data) {
   if (!/^[a-z][a-z0-9-]{1,99}$/.test(data.lessonId) || !/^[a-z][a-z0-9-]{1,63}$/.test(data.experimentId) || !/^\d+\.\d+\.\d+$/.test(data.version)) throw new Error('The lesson identifier is invalid.');
   const cache = await caches.open(CACHE);
-  const urls = ['/', '/offline', `/learn/${data.lessonId}`, '/backend/v1/subjects', '/backend/v1/lessons', `/backend/v1/lessons/${data.lessonId}`, '/backend/v1/experiments?limit=100&after=', `/backend/v1/experiments/${data.experimentId}/versions/${data.version}`, `/backend/v1/offline/packs/${data.lessonId}`];
+  const urls = ['/', '/offline', `/learn/${data.lessonId}`, ...MASCOT_ASSETS, '/backend/v1/subjects', '/backend/v1/lessons', `/backend/v1/lessons/${data.lessonId}`, '/backend/v1/experiments?limit=100&after=', `/backend/v1/experiments/${data.experimentId}/versions/${data.version}`, `/backend/v1/offline/packs/${data.lessonId}`];
   const seen = new Set();
   while (urls.length) {
     const path = urls.shift();

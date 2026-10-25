@@ -115,6 +115,15 @@ async function get(url, options) { const response = await fetch(origin + url, op
     await page.goto(origin + '/profile?ci-offline=1');
     await expect(page.getByRole('heading', { name: 'You are offline', exact: true })).toBeVisible();
     checks++;
+    for (const mood of ['wave', 'think', 'cheer', 'puzzled']) {
+      const dimensions = await page.evaluate(mood => new Promise(resolve => {
+        const image = new Image();
+        image.onload = () => resolve({ width: image.naturalWidth, height: image.naturalHeight });
+        image.onerror = () => resolve(null);
+        image.src = `/art/mascot-${mood}.webp`;
+      }), mood);
+      check(dimensions?.width > 0 && dimensions?.height > 0, `The ${mood} mascot renders offline without an earlier visit to its lesson state`);
+    }
     await context.setOffline(false);
     check(errors.length === 0, `Browser exceptions: ${errors.join('; ')}`);
     check(unavailable.length === 0, `Unavailable API requests: ${unavailable.join('; ')}`);

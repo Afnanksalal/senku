@@ -16,6 +16,8 @@ Senku turns a question into something you can explore. Follow a personal mission
 
 **Start with [Quick start](#quick-start), browse the [screenshots](#a-look-inside), or read the [documentation](docs/README.md).**
 
+**[Open Senku](https://senku.18.61.174.6.sslip.io/welcome)**. Guest exploration is available immediately. Use your existing account for migrated cloud progress; remote computation and connected guidance require an invitation budget.
+
 ## What you can do
 
 - **Follow your curiosity.** Ask a natural question and move into a mission, game, investigation or lab that fits it.

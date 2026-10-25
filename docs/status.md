@@ -1,6 +1,20 @@
 # Implementation status
 
-As of 2026-10-24. Original dependency bootstrap evidence remains in [environment-verification.json](environment-verification.json). Backend behavior, contracts and operating limits are documented in [backend.md](backend.md) and [backend coverage](backend-coverage.md).
+As of 2026-10-25. Original dependency bootstrap evidence remains in [environment-verification.json](environment-verification.json). Backend behavior, contracts and operating limits are documented in [backend.md](backend.md) and [backend coverage](backend-coverage.md).
+
+## Playground deployment and migration
+
+The current platform is publicly deployed at https://senku.18.61.174.6.sslip.io with a dedicated Caddy ingress and a publicly trusted Let's Encrypt certificate. The selected host was verified as playground. The user's explicit instructions authorized removal of the prior Hana Chat and FLDShield stacks; Minecraft was stopped and its files preserved. Syncthing and unrelated data remain unchanged.
+
+A coordinated write pause captured the local database, artifact store and Redis data. Transfer checksums passed and all 50 restored application tables matched their original sorted-row SHA256 fingerprints exactly:829 rows. Runtime configuration and read-only ADC were transferred separately over SSH, excluded from source and images. The original local snapshot remains an off-host recovery copy. Production startup verifies provisioned migrations and bucket rather than creating them automatically.
+
+Fresh local full verification with live sources passed before release. On the VPS, all nine science dependency environments, seven native reference suites, supervisor boundaries and a separate isolated docking worker passed. The upper effort8/five-pose search completed in19.451seconds inside the configured limits. Public API verification covered authentication/CORS, profile/export, quotas, real simulations and artifacts, offline XP receipts, three native pathway engines, actual molecular collections/four-pair docking/reflection, connected missions/games/chat/research, shared WebSocket editing/reconnect/revocation and classroom permissions. Temporary accounts were deleted and their budgets disabled.
+
+Public browser verification passed128 checks plus31 real drawing checks and five navigation cleanup cycles. A separate39-route sweep passed78 mobile/desktop layout checks, with no horizontal overflow, browser exceptions, unavailable API responses or charged guest operations. Authenticated browser verification passed27 checks for actual four-pair results, linked3D/crystal/2D views, exact exports, reload without rebilling and fully offline lesson evidence that synchronized20XP once. An independent GitHub runner also passed the actual public HTTPS/browser workflow.
+
+Observed failures are retained as evidence: an initial research request failed before planning and a separate bounded retry completed two actual runs with five retrieved citations. An initial automatic molecular reflection failed at the provider boundary; the visible explicit retry completed without rerunning science. No scores, report or successful first-attempt claims were fabricated. Visual inspection found an uncached offline celebration mascot; the worker now requires all four mascot moods during installation and lesson preparation, with a shell cache version bump and browser image regression checks.
+
+This deployment is not clinical validation, load/SLO certification or an off-host scheduled backup service. The hosting account's application budget is separate from provider billing controls. A local FortiGuard gateway was independently observed replacing the site's certificate and blocking the Dynamic DNS category; public Linux/GitHub clients validated the actual certificate and application. See [deployment operations](deployment.md).
 
 | Area | Status | Evidence / limitation |
 |---|---|---|
@@ -18,7 +32,7 @@ As of 2026-10-24. Original dependency bootstrap evidence remains in [environment
 | Worker isolation | Per-job supervision implemented | Non-root/read-only internal-network containers, bounded child process groups, actual cancellation/timeouts and output limits |
 | Operations | Local tools implemented | Metrics/readiness, cleanup/retention, database/object snapshot restore and CI definition |
 | Frontend | Expanded local platform implemented | Explore/Learn/Lab/Play/Research/Companion/Pathways/Shared labs/Classroom/Offline surfaces connected; 34 routes passed 102 responsive width checks. Scientific 3D/2D scenes and real molecular/structure viewers, frame controls, exports and provenance |
-| Production deployment | Not certified or published | Requires real TLS/identity/secrets, least-privilege deployment roles, billing/alerts, load/SLO/privacy checks and off-host recovery exercises |
+| Production deployment | Public playground instance verified | TLS, migrated data, real-worker/provider and public browser evidence above; load/SLO certification, scheduled off-host backups and billing alerts remain separate operator work |
 
 The backend is no longer a health-only scaffold. Feature implementation, local integration evidence, live provider verification and scientific validity remain separate statuses. The operating guide makes the remaining deployment-dependent gates explicit.
 

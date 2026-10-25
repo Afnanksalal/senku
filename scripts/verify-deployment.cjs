@@ -2,7 +2,7 @@
  * Run inside the API container with its normal environment and explicit
  * SENKU_PUBLIC_ACCEPTANCE=true, SENKU_TEST_URL=https://your-host.
  * Uses real workers/provider and a dedicated 40-unit temporary budget.
- * SENKU_TEST_SECTIONS=core,molecules,ai,collaboration selects a failed section
+ * SENKU_TEST_SECTIONS=core,molecules,ai,research,collaboration selects a failed section
  * without repeating successful paid sections. Every invocation cleans its users.
  */
 const assert = require('node:assert/strict');
@@ -14,10 +14,10 @@ if (process.env.SENKU_PUBLIC_ACCEPTANCE !== 'true' || origin.protocol !== 'https
     origin.origin !== process.env.SENKU_TEST_URL ||
     !(process.env.CORS_ORIGINS || '').split(',').includes(origin.origin))
   throw Error('Explicit acceptance and the configured exact public HTTPS origin are required');
-const selected = new Set((process.env.SENKU_TEST_SECTIONS || 'core,molecules,ai,collaboration').split(','));
-for (const section of selected) if (!['core','molecules','ai','collaboration'].includes(section))
+const selected = new Set((process.env.SENKU_TEST_SECTIONS || 'core,molecules,ai,research,collaboration').split(','));
+for (const section of selected) if (!['core','molecules','ai','research','collaboration'].includes(section))
   throw Error('Unknown acceptance section');
-if ((selected.has('ai') || selected.has('molecules')) && process.env.ENABLE_GEMINI !== 'true') throw Error('Real connected service required');
+if ((selected.has('ai') || selected.has('molecules') || selected.has('research')) && process.env.ENABLE_GEMINI !== 'true') throw Error('Real connected service required');
 const schema = process.env.DB_SCHEMA || 'public';
 if (!/^[a-z][a-z0-9_]{0,62}$/.test(schema)) throw Error('Invalid database schema');
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, options: `-c search_path=${schema},public` });
@@ -158,12 +158,17 @@ async function ai() {
   const feedback=await post(`/v1/challenges/dynamic/${scenario.id}/explain`,token,proof);check(feedback.source==='gemini'&&feedback.explanation.length>20,'Actual grounded game explanation');
   const companion=await post('/v1/companion/respond',token,{message:'Why do cells need both food and oxygen? Explain it simply.',experiment_id:'cell-energy',local:{parameters:{oxygen:30,glucose:60,demand:50},seed:42}});
   check(companion.status==='completed'&&companion.response.ai_generated&&companion.response.explanation.length>20,'Actual grounded companion');
+  facts.ai={mission:'connected',game:'connected',chat:'connected'};
+}
+async function research() {
+  const token=account.access_token;
   const investigation=await post('/v1/investigations',token,{question:'How does oxygen availability change the teaching cell energy model?',experiment_id:'cell-energy',literature_query:'cellular respiration oxygen glucose',use_ai:true});
   const report=await until(`/v1/investigations/${investigation.id}`,token,i=>['completed','failed','cancelled'].includes(i.status),240000);
+  if(report.status!=='completed') console.error(JSON.stringify({research_status:report.status,error_code:report.error_code,tasks:(await pool.query('SELECT role,status FROM agent_tasks WHERE investigation_id=$1 ORDER BY role',[investigation.id])).rows}));
   check(report.status==='completed'&&report.result.facts.length>=1,'Actual planned science investigation');
   check(report.result.narrative.mode==='gemini'&&report.result.citations.length>0,'Actual generated research report and retrieved citations');
   check(report.result.narrative.citation_ids.every(id=>report.result.citations.some(c=>c.id===id)),'Research citations grounded in retrieved sources');
-  facts.ai={mission:'connected',game:'connected',chat:'connected',research_facts:report.result.facts.length,citations:report.result.citations.length};
+  facts.research={facts:report.result.facts.length,citations:report.result.citations.length};
 }
 function once(client,name) { return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Socket deadline: '+name)),12000);client.once(name,value=>{clearTimeout(timer);resolve(value)});}); }
 function socket(token,room,source=origin.origin) {
@@ -201,7 +206,7 @@ async function collaboration() {
   const invitation=await post('/v1/admin/invitations',account.access_token,{group_id:group.id,max_uses:1,expires_in_hours:1});await post('/v1/invitations/redeem',account.access_token,{code:invitation.code});
   const engines=await request('/v1/admin/operations/engines',{token:account.access_token});
   check(Object.keys(engines).length===9&&Object.values(engines).every(engine=>engine.available),'All nine private scientific environments reachable');
-  for(const [name,operation] of Object.entries({core,molecules,ai,collaboration}))if(selected.has(name)) {
+  for(const [name,operation] of Object.entries({core,molecules,ai,research,collaboration}))if(selected.has(name)) {
     console.log(JSON.stringify({section:name,status:'started'}));await operation();passed.push(name);console.log(JSON.stringify({section:name,status:'passed',checks}));
   }
   const refreshed=await post('/v1/auth/refresh',undefined,{refresh_token:other.refresh_token});other.access_token=refreshed.access_token;other.refresh_token=refreshed.refresh_token;
